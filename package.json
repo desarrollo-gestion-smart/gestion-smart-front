@@ -108,7 +108,7 @@
     "scripts": {
         "start": "react-scripts start",
         "build-stage": "env-cmd -f .env.qa react-scripts build",
-        "build": "react-scripts build",
+        "build": "npm install --no-warnings && react-scripts build",
         "lint": "eslint --ext .js,.jsx ./src",
         "test": "react-scripts test",
         "eject": "react-scripts eject"
