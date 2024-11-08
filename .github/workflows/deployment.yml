@@ -1,0 +1,33 @@
+name: Deploy Frontend to Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '22.11.0' # Cambia esta versión según la que uses en el proyecto
+
+      - name: Install dependencies and build frontend
+        run: |
+          npm install
+          npm run build
+
+      - name: Deploy frontend to server
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+          ssh -o StrictHostKeyChecking=no root@149.50.142.112 "rm -rf /var/www/html && mkdir -p /var/www/html"
+          rsync -avz --exclude="node_modules" build/ root@149.50.142.112:/var/www/html/
