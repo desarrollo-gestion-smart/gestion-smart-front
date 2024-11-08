@@ -25,6 +25,7 @@ jobs:
 
       - name: Deploy frontend to server
         env:
+          CI: false
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           mkdir -p ~/.ssh
