@@ -20,13 +20,12 @@ jobs:
 
       - name: Install dependencies and build frontend
         run: |
-          npm install --no-warnings  # Deshabilitar los warnings de npm
-          npm audit fix --force      # Intentar solucionar vulnerabilidades automáticamente
+          npm install
           npm run build
 
       - name: Deploy frontend to server
         env:
-          CI: false                    # Deshabilitar el comportamiento de CI que convierte los warnings en errores
+          CI: false
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           mkdir -p ~/.ssh
