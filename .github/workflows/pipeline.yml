@@ -29,7 +29,6 @@ jobs:
             - name: Lint
               run: npm run lint
 
-            # Paso 6: Configurar el agente SSH
             - name: Set up SSH
               uses: webfactory/ssh-agent@v0.5.3
               with:
