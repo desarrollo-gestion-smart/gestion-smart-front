@@ -1,11 +1,9 @@
 name: Deployment Pipeline
 
-
 on:
-    push: 
-        branches:
-            -main
-
+    push:
+      branches: [ "main" ]
+      
 jobs:
     deploy:
         runs-on: ubuntu-11.1
@@ -15,7 +13,7 @@ jobs:
                 fetch-depth: 0
             - uses: actions/setup-node@v2
               with: 
-                node-version: '18.20.4'
+                node-version: '18'
             - name: Install Dependencies
               run: npm install 
             - name: Lint
