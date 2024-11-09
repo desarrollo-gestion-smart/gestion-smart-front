@@ -1,0 +1,35 @@
+name: Deploy to DonWeb
+
+on:
+  push:
+    branches:
+      - main  # Cambia "main" por la rama desde la cual deseas desplegar
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DONWEB_SSH_KEY }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > /tmp/deploy_key
+          chmod 600 /tmp/deploy_key
+
+      - name: Deploy to DonWeb via SSH
+        env:
+          HOST: ${{ secrets.DONWEB_HOST }}
+          USER: ${{ secrets.DONWEB_USER }}
+          PORT: ${{ secrets.DONWEB_PORT }}
+        run: |
+          ssh -i /tmp/deploy_key -o StrictHostKeyChecking=no -p $PORT $USER@$HOST "
+            cd /var/www/html &&
+            git pull origin main &&
+            npm install &&
+            npm run build &&
+            pm2 restart all
+          "
