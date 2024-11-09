@@ -36,12 +36,11 @@ jobs:
               with:
                 ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-            # Paso 7: Desplegar en el servidor de producción
             - name: Deploy to server
               run: |
                 ssh -o StrictHostKeyChecking=no root@149.50.142.112 << 'EOF'
                   # Paso 1: Navegar al directorio de la aplicación
-                  cd /var/www/mi-aplicacion || exit 1
+                  cd /var/www/html || exit 1
 
                   # Paso 2: Hacer pull de los últimos cambios
                   git pull origin main || exit 1
