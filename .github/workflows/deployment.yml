@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up SSH
+      - name: Set up SSH Key
         env:
           SSH_PRIVATE_KEY_BASE64: ${{ secrets.DONWEB_SSH_KEY_BASE64 }}
         run: |
