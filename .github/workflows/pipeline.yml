@@ -18,6 +18,8 @@ jobs:
               run: npm cache clean --force
             - name: Install Dependencies
               run: npm install  
+            - name: Install PM2
+              run: npm install -g pm2  # Instalar PM2 globalmente
             - name: Lint
               run: npm run lint
             - name: PM2 
