@@ -1,28 +1,31 @@
-name: Deploy to NGINX Server
+name: Deploy to Nginx Server
 
 on:
   push:
     branches:
-      - main  
+      - main  # o la rama que estés usando
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2  # Este paso es para asegurarnos de que el código esté disponible
+    # 1. Check out el código del repositorio
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
+    # 2. Configurar el agente SSH
     - name: Set up SSH
       uses: webfactory/ssh-agent@v0.5.3
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: Deploy to server
+    # 3. Agregar el servidor a known_hosts
+    - name: Add SSH key to known hosts
       run: |
-        ssh -o StrictHostKeyChecking=no root@149.50.142.112 << 'EOF'
-          cd /var/www/html
-          git pull origin main  # Aquí se hace el pull para actualizar el servidor con los cambios
-          # Si necesitas reiniciar NGINX (por ejemplo, si actualizas archivos de configuración):
-          sudo systemctl restart nginx
-        EOF
+        mkdir -p ~/.ssh
+        ssh-keyscan -H 149.50.142.112 >> ~/.ssh/known_hosts
+
+    # 4. Hacer git pull en el servidor remoto
+    - name: Deploy changes to server
+      run: |
+        ssh -o StrictHostKeyChecking=no root@149.50.142.112 "cd /var/www/html && git pull && sudo systemctl restart nginx"
