@@ -1,57 +1,21 @@
-name: Deployment Pipeline
+name: SSH Setup Example
 
 on:
-    push:
-      branches: [ "main" ]
+  push:
+    branches:
+      - main
 
 jobs:
-    deploy:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v2
-              with: 
-                fetch-depth: 0
+  setup-ssh:
+    runs-on: ubuntu-latest
 
-            # Paso 2: Configurar Node.js
-            - uses: actions/setup-node@v2
-              with: 
-                node-version: '20.x'
+    steps:
+    # Este paso configura el agente SSH en el entorno de GitHub Actions
+    - name: Set up SSH agent
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-            # Paso 3: Limpiar la caché de NPM
-            - name: Clear NPM Cache
-              run: npm cache clean --force
-
-            # Paso 4: Instalar dependencias
-            - name: Install Dependencies
-              run: npm install  
-
-            # Paso 5: Ejecutar Lint
-            - name: Lint
-              run: npm run lint
-
-            - name: Set up SSH
-              uses: webfactory/ssh-agent@v0.5.3
-              with:
-                ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-            - name: Deploy to server
-              run: |
-                ssh -o StrictHostKeyChecking=no root@149.50.142.112 << 'EOF'
-                  # Paso 1: Navegar al directorio de la aplicación
-                  cd /var/www/html || exit 1
-
-                  # Paso 2: Hacer pull de los últimos cambios
-                  git pull origin main || exit 1
-
-                  # Paso 3: Instalar dependencias si es necesario
-                  npm install || exit 1
-
-                  # Paso 4: Copiar archivos al directorio de Nginx (excluyendo la carpeta .git)
-                  rsync -av --exclude='.git' ./ /var/www/html/ || exit 1
-
-                  # Paso 5: Reiniciar PM2
-                  pm2 reload 0 || exit 1
-
-                  # Paso 6: Reiniciar Nginx
-                  systemctl restart nginx || exit 1
-                EOF
+    # Este paso puede servir para verificar si la conexión SSH funciona
+    - name: Test SSH connection
+      run: ssh -o StrictHostKeyChecking=no root@149.50.142.112 "echo 'SSH connection successful'"
