@@ -212,7 +212,7 @@ const jwt = require("jsonwebtoken");
 
 app.get("/api/mercadopago/callback", authenticateJWT, async (req, res) => {
   const { code, state } = req.query;
-console.log(code,state)
+
   console.log("Callback recibido con parámetros:", { code, state });
 
   if (!code || !state) {
@@ -283,21 +283,21 @@ console.log(code,state)
 
     console.log("Billetera vinculada exitosamente para el usuario:", userId);
 
-    // Redirigir al cliente a una página de éxito
-    res.redirect("https://gestion-smart.com/apps/wallet/vinculate?success=true");
+    // Enviar URL de redirección al frontend como respuesta JSON
+    res.status(200).json({
+      redirectUrl: "https://gestion-smart.com/apps/wallet/vinculate?success=true",
+    });
   } catch (error) {
     console.error("Error en el callback:", error.response?.data || error.message);
 
-    // Redirigir al cliente a una página de error
-    res.redirect(
-      "https://gestion-smart.com/apps/wallet/vinculate?success=false&error=" +
-        encodeURIComponent("No se pudo vincular tu billetera. Intenta de nuevo.")
-    );
+    // Enviar URL de error al frontend como respuesta JSON
+    res.status(500).json({
+      redirectUrl:
+        "https://gestion-smart.com/apps/wallet/vinculate?success=false&error=" +
+        encodeURIComponent("No se pudo vincular tu billetera. Intenta de nuevo."),
+    });
   }
-
- 
 });
-
 const PORT = 5001;
 app.listen(PORT, () => {
   console.log(`Server running on ${PORT}`);
