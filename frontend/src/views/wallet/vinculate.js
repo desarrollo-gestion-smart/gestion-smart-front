@@ -83,6 +83,7 @@ const PaymentCards = () => {
             },
           }
         );
+        
 
         if (!response.ok) {
           throw new Error("Error al verificar la wallet");
