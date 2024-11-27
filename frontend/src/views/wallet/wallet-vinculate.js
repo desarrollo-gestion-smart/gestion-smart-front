@@ -10,53 +10,49 @@ const MercadoPagoCallback = () => {
       const code = query.get("code");
       const state = query.get("state");
 
-      console.log("Callback montado.");
+      console.log("MercadoPagoCallback mounted.");
       console.log("Code:", code);
       console.log("State:", state);
 
       if (code && state) {
         try {
-          const token = localStorage.getItem("token");
+          const token = localStorage.getItem("token"); // Obtener el token JWT del localStorage
 
           if (!token) {
-            console.error("Token no encontrado.");
+            console.error("Token no encontrado en localStorage.");
             window.location.href = "/mercadopago/error";
             return;
           }
 
-          // Enviar la solicitud GET al backend
+          // Enviar una solicitud GET al backend con los parámetros en la URL y el encabezado de autenticación
           const response = await axios.get(
             `https://gestion-smart-front-production.up.railway.app/api/mercadopago/callback?code=${code}&state=${state}`,
             {
               headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${token}`, // Agregar token JWT en el encabezado
               },
             }
           );
 
           console.log("Respuesta del backend:", response.data);
 
-          // Redirigir al usuario según la URL proporcionada por el backend
-          if (response.data.redirectUrl) {
-            window.location.href = response.data.redirectUrl;
-          } else {
-            console.error("No se recibió una URL de redirección válida.");
-            window.location.href = "/mercadopago/error";
-          }
+          const { redirectUrl } = response.data;
+          // window.location.href = redirectUrl; // Redirigir al usuario
         } catch (error) {
-          console.error("Error al procesar el callback:", error.response?.data || error.message);
-          window.location.href = "/mercadopago/error";
+          console.error(
+            "Error al procesar el callback de MercadoPago:",
+            error.response?.data || error.message
+          );
+          // window.location.href = "/mercadopago/error";
         }
       } else {
         console.log("Faltan parámetros 'code' o 'state' en la URL.");
-        window.location.href = "/mercadopago/error";
+        // window.location.href = "/mercadopago/error";
       }
     };
 
     processCallback();
   }, []);
-
-
 
   return (
     <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
