@@ -11,7 +11,8 @@ const DashboardAnalytics = Loadable(lazy(() => import('views/dashboard/Analytics
 const WalletVinculate = Loadable(lazy(() => import('views/wallet/vinculate')))
 const WalletTransactions = Loadable(lazy(() => import('views/wallet/transactions')))
 const WalletChekout = Loadable(lazy(() => import('views/wallet/setup-checkout')))
-
+//clientes
+const AppClientsTable = Loadable(lazy(() => import('views/application/clients/clientsTable')))
 // widget routing
 // const WidgetStatistics = Loadable(lazy(() => import('views/widget/Statistics')));
 // const WidgetData = Loadable(lazy(() => import('views/widget/Data')));
@@ -35,7 +36,7 @@ const AppProfileListStyle1 = Loadable(lazy(() => import('views/application/users
 const AppProfileListStyle2 = Loadable(lazy(() => import('views/application/users/list/Style2')));
 
 // application - customer routing
-const AppCustomerList = Loadable(lazy(() => import('views/application/customer/CustomerList')));
+const AppCustomerList = Loadable(lazy(() => import('views/application/customer/AdministradorPrincipal')));
 const AppCustomerOrderList = Loadable(lazy(() => import('views/application/customer/OrderList')));
 const AppCustomerCreateInvoice = Loadable(lazy(() => import('views/application/customer/CreateInvoice')));
 const AppCustomerOrderDetails = Loadable(lazy(() => import('views/application/customer/OrderDetails')));
@@ -204,6 +205,10 @@ const MainRoutes = {
         {
             path: '/apps/customer/customer-list',
             element: <AppCustomerList />
+        },
+        {
+            path: '/apps/clients/clientsTable',
+            element: <AppClientsTable />
         },
         {
             path: '/apps/customer/order-list',

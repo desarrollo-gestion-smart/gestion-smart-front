@@ -1,5 +1,10 @@
 // third-party
 import { FormattedMessage } from 'react-intl';
+import {
+    Box
+   
+} from '@mui/material';
+import { ExpandMore, Group } from '@mui/icons-material'; // Importa los iconos necesarios
 
 // assets
 import {
@@ -14,7 +19,7 @@ import {
     IconLayoutKanban,
     IconMail,
     IconCalendar,
-    IconNfc
+    IconNfc,
 } from '@tabler/icons-react';
 
 // constant
@@ -30,7 +35,8 @@ const icons = {
     IconUsersGroup,
     IconMoneybag,
     IconSettings2,
-    IconZoomCode
+    IconZoomCode,
+    ExpandMore
 };
 
 // ==============================|| APPLICATION MENU ITEMS ||============================== //
@@ -163,11 +169,33 @@ const application = {
             children: [
                 {
                     id: 'customer-list',
-                    title: <FormattedMessage id="Administrador Principal" />,
-                    type: 'item',
-                    url: '/apps/customer/customer-list',
-                    breadcrumbs: false
-                },
+                    title: (
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <FormattedMessage id="Administrador " />
+                            {/* <icons.ExpandMore sx={{ fontSize: '14px', marginRight:'14px'}} /> Icono de flecha más pequeño */}
+                        </Box>
+                    ),
+                    type: 'collapse',
+                    children: [
+                        {
+                            id: 'customer-list',
+                            title: <FormattedMessage id="Gestion de Usuarios" />,
+                            type: 'item',
+                            url: '/apps/customer/customer-list',
+                            breadcrumbs: false
+                        },
+        
+                        {
+                            id: 'clients-table',
+                            title: <FormattedMessage id="Gestion de Clientes" />,
+                            type: 'item',
+                            url: '/apps/clients/clientsTable',
+                            breadcrumbs: false
+                        },
+                   
+                ]
+               
+            },
                 {
                     id: 'order-list',
                     title: <FormattedMessage id="Partners" />,

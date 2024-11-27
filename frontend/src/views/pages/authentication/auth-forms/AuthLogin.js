@@ -14,7 +14,8 @@ import {
     InputAdornment,
     InputLabel,
     OutlinedInput,
-    Typography
+    Typography,
+    CircularProgress,  // Importar CircularProgress
 } from '@mui/material';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
@@ -30,6 +31,7 @@ const JWTLogin = ({ loginProp, ...others }) => {
 
     const [checked, setChecked] = React.useState(true);
     const [showPassword, setShowPassword] = React.useState(false);
+    const [loading, setLoading] = React.useState(false); // Estado de carga
 
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword);
@@ -56,8 +58,9 @@ const JWTLogin = ({ loginProp, ...others }) => {
                 password: Yup.string().max(255).required('La contraseña es obligatoria')
             })}
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+                setLoading(true);  // Iniciar la carga
                 try {
-                    const response = await fetch('http://127.0.0.1:5001/api/users/login', {
+                    const response = await fetch("https://gestion-smart-backend-production.up.railway.app/api/users/login", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -96,6 +99,8 @@ const JWTLogin = ({ loginProp, ...others }) => {
                     setStatus({ success: false });
                     setErrors({ submit: err.message });
                     setSubmitting(false);
+                } finally {
+                    setLoading(false);  // Detener la carga
                 }
             }}
         >
@@ -179,9 +184,9 @@ const JWTLogin = ({ loginProp, ...others }) => {
                                 variant="contained"
                                 color="primary"
                                 type="submit"
-                                disabled={isSubmitting}
+                                disabled={isSubmitting || loading}  // Desactivar el botón mientras está cargando
                             >
-                                Iniciar sesión
+                                {loading ? <CircularProgress size={24} color="primary" /> : 'Iniciar sesión'}
                             </Button>
                         </Grid>
                     </Grid>

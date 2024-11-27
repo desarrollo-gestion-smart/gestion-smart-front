@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 // Middleware de autenticación JWT
 const authenticateJWT = (req, res, next) => {
-    const token = req.header('Authorization')?.replace('Bearer ', '');  // Obtener el token desde la cabecera
+    const token = req.header('Authorization')?.replace('Bearer ', '') || req.query.state;
     if (!token) {
         return res.status(403).json({ message: 'Acceso denegado, token no proporcionado.' });
     }

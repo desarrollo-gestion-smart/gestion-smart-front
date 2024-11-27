@@ -30,6 +30,10 @@ const LoginRoutes = {
             element: <AuthLogin />
         },
         {
+            path: '/poseidon',
+            element: <AuthLogin />
+        },
+        {
             path: '/register',
             element: <AuthRegister />
         },
