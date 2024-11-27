@@ -25,11 +25,16 @@ const MercadoPagoCallback = () => {
           // }
 
           // Enviar una solicitud POST al backend con los parámetros
-          const response = await axios.get('https://gestion-smart-front-production.up.railway.app/api/mercadopago/callback', { code, state }, {
-            headers: {
-              Authorization: `Bearer ${state}`,
-            },
-          });
+          const response = await axios.post(
+            'https://gestion-smart-front-production.up.railway.app/api/mercadopago/callback',
+            { code, state }, // Enviar `code` y `state` en el cuerpo
+            {
+              headers: {
+                Authorization: `Bearer ${token}`, // Si es necesario, agrega autenticación
+                'Content-Type': 'application/json',
+              },
+            }
+          );
 
           console.log("Respuesta del backend:", response.data);
 
