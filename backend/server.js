@@ -229,6 +229,14 @@ app.get("/api/mercadopago/callback", async (req, res) => {
 
     // Solicitar el token de Mercado Pago
     console.log("Solicitando token de Mercado Pago...");
+    console.log("Parámetros enviados a Mercado Pago:");
+    console.log({
+      grant_type: "authorization_code",
+      client_id: process.env.MP_CLIENT_ID,
+      client_secret: process.env.MP_CLIENT_SECRET,
+      redirect_uri: process.env.MP_REDIRECT_URI,
+      code,
+    });
     const response = await axios.post(
       "https://api.mercadopago.com/oauth/token",
       new URLSearchParams({
