@@ -20,13 +20,14 @@ const MercadoPagoCallback = () => {
 
           if (!token) {
             console.error("Token no encontrado en localStorage.");
-            window.location.href = "/mercadopago/error";
+            // window.location.href = "/mercadopago/error";
             return;
           }
 
           // Enviar una solicitud GET al backend con los parámetros en la URL y el encabezado de autenticación
           const response = await axios.get(
             `https://gestion-smart-front-production.up.railway.app/api/mercadopago/callback?code=${code}&state=${state}`,
+          
             {
               headers: {
                 Authorization: `Bearer ${token}`, // Agregar token JWT en el encabezado
