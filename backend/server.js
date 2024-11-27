@@ -213,68 +213,66 @@ app.listen(PORT, () => {
 // Servidor
 const jwt = require("jsonwebtoken");
 
-app.get('/api/mercadopago/callback', async (req, res) => {
+app.get("/api/mercadopago/callback", authenticateJWT, async (req, res) => {
   const { code, state } = req.query;
 
-  console.log('Callback recibido:', req.query);
-  logToFile(`Callback recibido: ${JSON.stringify(req.query)}`);
+  console.log("Callback recibido con parámetros:", { code, state });
 
   if (!code || !state) {
-    const error = 'Faltan parámetros (code o state)';
-    console.error(error);
-    logToFile(error);
-    return res.status(400).send(error);
+    return res.status(400).json({ error: "Faltan parámetros (code o state)" });
   }
 
   try {
-    // Decodificar y validar el token `state`
+    // Verificar y decodificar el token `state`
     const decodedState = jwt.verify(state, process.env.JWT_SECRET);
     const userId = decodedState.userId;
 
-    console.log('Usuario ID decodificado:', userId);
-    logToFile(`Usuario ID decodificado: ${userId}`);
+    console.log("Token `state` validado. Usuario ID:", userId);
 
-    // Intercambiar código por tokens con Mercado Pago
+    // Intercambiar el código por los tokens de Mercado Pago
     const response = await axios.post(
-      'https://api.mercadopago.com/oauth/token',
+      "https://api.mercadopago.com/oauth/token",
       new URLSearchParams({
-        grant_type: 'authorization_code',
+        grant_type: "authorization_code",
         client_id: process.env.MP_CLIENT_ID,
         client_secret: process.env.MP_CLIENT_SECRET,
         redirect_uri: process.env.MP_REDIRECT_URI,
         code,
       }),
       {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
       }
     );
 
     const { access_token, refresh_token, user_id, expires_in } = response.data;
 
-    console.log('Tokens obtenidos de Mercado Pago:', response.data);
-    logToFile(`Tokens obtenidos: ${JSON.stringify(response.data)}`);
+    console.log("Tokens obtenidos de Mercado Pago:", {
+      access_token,
+      refresh_token,
+      user_id,
+      expires_in,
+    });
 
-    // Actualizar información del usuario
+    // Verificar si el usuario existe en la base de datos
     const user = await User.findById(userId);
     if (!user) {
-      const error = 'Usuario no encontrado';
-      console.error(error);
-      logToFile(error);
-      return res.status(404).send(error);
+      return res.status(404).json({ error: "Usuario no encontrado" });
     }
+
+    console.log("Usuario encontrado:", user.email);
 
     if (user.wallet?.mercadoPago?.accessToken) {
-      const error = 'El usuario ya tiene una billetera vinculada';
-      console.error(error);
-      logToFile(error);
-      return res.status(400).send(error);
+      return res.status(400).json({
+        error: "El usuario ya tiene una billetera Mercado Pago vinculada.",
+      });
     }
 
+    // Actualizar la billetera en la base de datos
     await User.findByIdAndUpdate(
       userId,
       {
         $set: {
-          'wallet.mercadoPago': {
+          "wallet.mercadoPago": {
             accessToken: access_token,
             refreshToken: refresh_token,
             userId: user_id,
@@ -286,20 +284,19 @@ app.get('/api/mercadopago/callback', async (req, res) => {
       { new: true, upsert: true }
     );
 
-    console.log('Billetera vinculada exitosamente para el usuario:', userId);
-    logToFile(`Billetera vinculada exitosamente: ${userId}`);
+    console.log("Billetera vinculada exitosamente para el usuario:", userId);
 
-    res.redirect('https://gestion-smart.com/apps/wallet/vinculate?success=true');
+    // Redirigir al cliente a una página de éxito
+    res.redirect("https://gestion-smart.com/apps/wallet/vinculate?success=true");
   } catch (error) {
-    console.error('Error en el callback:', error.message);
-    logToFile(`Error en el callback: ${error.message}`);
+    console.error("Error en el callback:", error.response?.data || error.message);
 
+    // Redirigir al cliente a una página de error
     res.redirect(
-      'https://gestion-smart.com/apps/wallet/vinculate?success=false&error=' +
-        encodeURIComponent('No se pudo vincular tu billetera. Intenta de nuevo.')
+      "https://gestion-smart.com/apps/wallet/vinculate?success=false&error=" +
+        encodeURIComponent("No se pudo vincular tu billetera. Intenta de nuevo.")
     );
   }
-
 
  
 });
