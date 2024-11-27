@@ -53,7 +53,7 @@ const MercadoPagoCallback = () => {
     <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <CircularProgress />
       <Typography variant="h6" sx={{ mt: 2 }}>
-        Procesando tu pago...
+        Procesando tu pago....
       </Typography>
     </Box>
   );
