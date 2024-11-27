@@ -212,7 +212,7 @@ const jwt = require("jsonwebtoken");
 
 app.post("/api/mercadopago/callback", authenticateJWT, async (req, res) => {
   const { code, state } = req.body;
-
+console.log(code,state)
   console.log("Callback recibido con parámetros:", { code, state });
 
   if (!code || !state) {
