@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Card,
   CardContent,
@@ -100,10 +101,43 @@ const PaymentCards = () => {
     checkWalletStatus();
   }, []);
 
+
+  useEffect(() => {
+    const processCallback = async () => {
+        const query = new URLSearchParams(window.location.search);
+        const code = query.get('code');
+        const state = query.get('state');
+
+        if (code && state) {
+            try {
+                // Enviar el código y estado al backend para procesarlos
+                const response = await axios.post('/api/mercadopago/callback', {
+                  code,
+                  state,
+              });
+                console.log(response)
+                // Supongamos que el backend responde con una URL a la que redirigir
+                const { redirectUrl } = response.data;
+                window.location.href = redirectUrl; // Redirección usando window.location
+                console.log(response.data)
+            } catch (error) {
+                console.error('Error al procesar el callback de MercadoPago:', error);
+                // Redirigir a una página de error utilizando window.location
+                // window.location.href = '/mercadopago/error';
+            }
+        } else {
+            // Parámetros faltantes, redirigir a error
+            // window.location.href = '/mercadopago/error';
+        }
+    };
+
+    processCallback();
+}, []);
+
   const handleConnect = async (url) => {
     if (url.includes("mercadopago")) {
-      const clientId = "6412415382079695";
-      const redirectUri = "https://gestion-smart.com/mercadopago/callback";
+      const clientId = "275793137258734";
+      const redirectUri = "https://gestion-smart.com/vinculate/mercadopago/callback";
       const token = localStorage.getItem("token");
 
       const authorizationUrl = `https://auth.mercadopago.com/authorization?client_id=${clientId}&response_type=code&platform_id=mp&redirect_uri=${encodeURIComponent(

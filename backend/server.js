@@ -210,8 +210,8 @@ const sendMessageToUser = (to, message) => {
 // Servidor
 const jwt = require("jsonwebtoken");
 
-app.get("/mercadopago/callback", authenticateJWT, async (req, res) => {
-  const { code, state } = req.query;
+app.post("/api/mercadopago/callback", authenticateJWT, async (req, res) => {
+  const { code, state } = req.body;
 
   console.log("Callback recibido con parámetros:", { code, state });
 

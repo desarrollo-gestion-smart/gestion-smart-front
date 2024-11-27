@@ -258,7 +258,7 @@ const MainRoutes = {
             element: <WalletTransactions />
         },
         {
-            path: '/mercadopago/callback',
+            path: '/vinculate/mercadopago/callback',
             element:  <WalletChekout />
         },
         {
