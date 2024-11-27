@@ -34,15 +34,15 @@ const MercadoPagoCallback = () => {
           console.log("Respuesta del backend:", response.data);
 
           const { redirectUrl } = response.data;
-          window.location.href = redirectUrl; // Redirigir al usuario
+          // window.location.href = redirectUrl; // Redirigir al usuario
 
         } catch (error) {
           console.error('Error al procesar el callback de MercadoPago:', error.response?.data || error.message);
-          window.location.href = '/mercadopago/error';
+          // window.location.href = '/mercadopago/error';
         }
       } else {
         console.log("Faltan parámetros 'code' o 'state' en la URL.");
-        window.location.href = '/mercadopago/error';
+        // window.location.href = '/mercadopago/error';
       }
     };
 
