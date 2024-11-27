@@ -75,7 +75,7 @@ const PaymentCards = () => {
 
       try {
         const response = await fetch(
-          "http://gestion-smart-front-production.up.railway.app/api/mercadopago/wallet-status",
+          "https://gestion-smart-front-production.up.railway.app/api/mercadopago/wallet-status",
           {
             method: "GET",
             headers: {
@@ -118,7 +118,7 @@ const PaymentCards = () => {
                 console.log(response)
                 // Supongamos que el backend responde con una URL a la que redirigir
                 const { redirectUrl } = response.data;
-                window.location.href = redirectUrl; // Redirección usando window.location
+                window.location.href = "redirectUrl"; // Redirección usando window.location
                 console.log(response.data)
             } catch (error) {
                 console.error('Error al procesar el callback de MercadoPago:', error);
