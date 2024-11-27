@@ -11,6 +11,7 @@ const DashboardAnalytics = Loadable(lazy(() => import('views/dashboard/Analytics
 const WalletVinculate = Loadable(lazy(() => import('views/wallet/vinculate')))
 const WalletTransactions = Loadable(lazy(() => import('views/wallet/transactions')))
 const WalletChekout = Loadable(lazy(() => import('views/wallet/wallet-vinculate')))
+const WalletVerified = Loadable(lazy(() => import('views/wallet/verified')))
 //clientes
 const AppClientsTable = Loadable(lazy(() => import('views/application/clients/clientsTable')))
 // widget routing
@@ -260,6 +261,10 @@ const MainRoutes = {
         {
             path: '/vinculate/mercadopago/callback',
             element:  <WalletChekout />
+        },
+        {
+            path: '/apps/wallet/vinculate?success=true',
+            element:  <WalletVerified />
         },
         {
             path: '/apps/mail',
