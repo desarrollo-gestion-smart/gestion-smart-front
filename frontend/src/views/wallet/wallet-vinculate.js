@@ -20,14 +20,13 @@ const MercadoPagoCallback = () => {
 
           if (!token) {
             console.error("Token no encontrado en localStorage.");
-            // window.location.href = "/mercadopago/error";
+            // window.location.href = "/mercadopago/error"; // Redirigir a la página de error
             return;
           }
 
           // Enviar una solicitud GET al backend con los parámetros en la URL y el encabezado de autenticación
           const response = await axios.get(
             `https://gestion-smart-front-production.up.railway.app/api/mercadopago/callback?code=${code}&state=${state}`,
-          
             {
               headers: {
                 Authorization: `Bearer ${token}`, // Agregar token JWT en el encabezado
@@ -38,17 +37,20 @@ const MercadoPagoCallback = () => {
           console.log("Respuesta del backend:", response.data);
 
           const { redirectUrl } = response.data;
-          // window.location.href = redirectUrl; // Redirigir al usuario
+
+          if (redirectUrl) {
+            window.location.href = redirectUrl; // Redirigir al usuario a la URL proporcionada
+          }
         } catch (error) {
           console.error(
             "Error al procesar el callback de MercadoPago:",
             error.response?.data || error.message
           );
-          // window.location.href = "/mercadopago/error";
+          // window.location.href = "/mercadopago/error"; // Redirigir a la página de error
         }
       } else {
         console.log("Faltan parámetros 'code' o 'state' en la URL.");
-        // window.location.href = "/mercadopago/error";
+        // window.location.href = "/mercadopago/error"; // Redirigir a la página de error
       }
     };
 
@@ -56,7 +58,7 @@ const MercadoPagoCallback = () => {
   }, []);
 
   return (
-    <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <Box sx={{ p: 3, display: "flex", flexDirection: "column", alignItems: "center" }}>
       <CircularProgress />
       <Typography variant="h6" sx={{ mt: 2 }}>
         Procesando tu pago....
