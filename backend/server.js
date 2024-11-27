@@ -210,7 +210,7 @@ const sendMessageToUser = (to, message) => {
 // Servidor
 const jwt = require("jsonwebtoken");
 
-app.post("gestion-smart-front-production.up.railway.app/api/mercadopago/callback", authenticateJWT, async (req, res) => {
+app.post("/api/mercadopago/callback", authenticateJWT, async (req, res) => {
   const { code, state } = req.body;
 console.log(code,state)
   console.log("Callback recibido con parámetros:", { code, state });
