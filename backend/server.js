@@ -233,9 +233,9 @@ app.get("/api/mercadopago/callback", async (req, res) => {
       "https://api.mercadopago.com/oauth/token",
       new URLSearchParams({
         grant_type: "authorization_code",
-        client_id: process.env.MP_CLIENT_ID,
-        client_secret: process.env.MP_CLIENT_SECRET,
-        redirect_uri: process.env.MP_REDIRECT_URI,
+        client_id: "275793137258734",
+        client_secret: "xzoghtz7AINHIGA1ZOzyDBEaJYW8iXjV",
+        redirect_uri: "https://gestion-smart.com/vinculate/mercadopago/callback",
         code,
       }),
       {
