@@ -60,7 +60,7 @@ const JWTLogin = ({ loginProp, ...others }) => {
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                 setLoading(true);  // Iniciar la carga
                 try {
-                    const response = await fetch("https://gestion-smart-backend-production.up.railway.app/api/users/login", {
+                    const response = await fetch("https://gestion-smart-front-production.up.railway.app/api/users/login", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
