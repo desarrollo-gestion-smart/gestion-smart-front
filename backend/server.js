@@ -206,10 +206,7 @@ const sendMessageToUser = (to, message) => {
 };
 
 
-const PORT = 5001;
-app.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`);
-});
+
 // Servidor
 const jwt = require("jsonwebtoken");
 
@@ -299,4 +296,9 @@ app.get("/api/mercadopago/callback", authenticateJWT, async (req, res) => {
   }
 
  
+});
+
+const PORT = 5001;
+app.listen(PORT, () => {
+  console.log(`Server running on ${PORT}`);
 });

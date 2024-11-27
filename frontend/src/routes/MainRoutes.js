@@ -10,7 +10,7 @@ const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')))
 const DashboardAnalytics = Loadable(lazy(() => import('views/dashboard/Analytics')));
 const WalletVinculate = Loadable(lazy(() => import('views/wallet/vinculate')))
 const WalletTransactions = Loadable(lazy(() => import('views/wallet/transactions')))
-const WalletChekout = Loadable(lazy(() => import('views/wallet/setup-checkout')))
+const WalletChekout = Loadable(lazy(() => import('views/wallet/wallet-vinculate')))
 //clientes
 const AppClientsTable = Loadable(lazy(() => import('views/application/clients/clientsTable')))
 // widget routing
@@ -144,11 +144,13 @@ const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
+    
     path: '/',
+
     element: (
-        <AuthGuard>
+        // <AuthGuard>
             <MainLayout />
-        </AuthGuard>
+        // </AuthGuard>
     ),
     children: [
         // {
@@ -256,7 +258,7 @@ const MainRoutes = {
             element: <WalletTransactions />
         },
         {
-            path: '/apps/wallet/setup-checkout',
+            path: '/mercadopago/callback',
             element:  <WalletChekout />
         },
         {
@@ -555,6 +557,6 @@ const MainRoutes = {
             element: <DashboardAnalytics />
         }
     ]
-};
+}
 
 export default MainRoutes;

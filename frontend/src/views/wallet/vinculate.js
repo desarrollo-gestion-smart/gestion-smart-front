@@ -100,33 +100,31 @@ const PaymentCards = () => {
     checkWalletStatus();
   }, []);
 
- 
   const handleConnect = async (url) => {
     if (url.includes("mercadopago")) {
-      const clientId = "275793137258734";
-      const redirectUri = "https://reypi.com.br/api/mercadopago/callback"; // Ruta del frontend
+      const clientId = "6412415382079695";
+      const redirectUri = "https://gestion-smart.com/mercadopago/callback";
       const token = localStorage.getItem("token");
-
-      if (!token) {
-        console.error("Token no encontrado en localStorage.");
-        return;
-      }
 
       const authorizationUrl = `https://auth.mercadopago.com/authorization?client_id=${clientId}&response_type=code&platform_id=mp&redirect_uri=${encodeURIComponent(
         redirectUri
       )}&state=${encodeURIComponent(token)}`;
 
-      console.log("Redirigiendo a Mercado Pago:", authorizationUrl);
-      window.location.href = authorizationUrl; // Redirige directamente al flujo de Mercado Pago
+      const popup = window.open(authorizationUrl, "_blank");
+
+      // Verifica cierre de ventana
+      const pollTimer = setInterval(() => {
+        if (popup.closed) {
+          clearInterval(pollTimer);
+          window.location.reload(); // Refresca la página para actualizar el estado
+        }
+      }, 500);
     }
   };
 
   if (loading) {
     return <Typography variant="h6">Cargando...</Typography>;
   }
-
-
- 
 
   return (
     <Box sx={{ padding: "20px" }}>

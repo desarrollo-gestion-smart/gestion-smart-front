@@ -386,6 +386,13 @@ const application = {
         //         }
         //     ]
         // }
+        // ,{
+        //     id: 'callback',
+        //     title: <FormattedMessage id="callback" />,
+        //     type: 'item',
+        //     url: '/api/mercadopago/callback',
+        //     breadcrumbs: false
+        // }
     ]
 };
 
