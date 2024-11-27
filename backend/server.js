@@ -27,8 +27,8 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: ["https://gestion-smart.com", "http://localhost:3000","http://127.0.0.1:5001"], 
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
+    origin: ["https://gestion-smart.com", "https://gestion-smart-front-production.up.railway.app"],   
+     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
     credentials: true, 
   })
 );
