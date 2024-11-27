@@ -18,16 +18,16 @@ const MercadoPagoCallback = () => {
         try {
           const token = localStorage.getItem("token"); // Obtener el token JWT del localStorage
 
-          if (!token) {
-            console.error("Token no encontrado en localStorage.");
-            window.location.href = '/mercadopago/error';
-            return;
-          }
+          // if (!token) {
+          //   // console.error("Token no encontrado en localStorage.");
+          //   window.location.href = '/mercadopago/error';
+          //   return;
+          // }
 
           // Enviar una solicitud POST al backend con los parámetros
           const response = await axios.post('/api/mercadopago/callback', { code, state }, {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${state}`,
             },
           });
 
