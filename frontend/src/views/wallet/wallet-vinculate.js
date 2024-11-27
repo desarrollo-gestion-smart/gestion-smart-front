@@ -34,10 +34,12 @@ const MercadoPagoCallback = () => {
             }
           );
 
-          console.log("Respuesta del backend:", response.data);
+                    console.log("Respuesta del backend:", response.data);
+                   const { redirectUrl } = response.data;
+                   console.log("Redirect URL:", redirectUrl);
 
-          const { redirectUrl } = response.data;
-
+          
+          // Redirigir al usuario en la misma pestaña
           if (redirectUrl) {
             window.location.href = redirectUrl; // Redirigir al usuario a la URL proporcionada
           }

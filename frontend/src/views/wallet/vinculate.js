@@ -75,7 +75,7 @@ const PaymentCards = () => {
 
       try {
         const response = await fetch(
-          "gestion-smart-front-production.up.railway.app/api/mercadopago/wallet-status",
+          "http://gestion-smart-front-production.up.railway.app/api/mercadopago/wallet-status",
           {
             method: "GET",
             headers: {
