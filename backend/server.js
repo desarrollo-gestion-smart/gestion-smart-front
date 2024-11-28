@@ -14,6 +14,7 @@ const diacritics = require('diacritics');
 const {findById} = require("./models/users");
 const authenticateJWT = require('./middleware/authmiddleware');
 const User = require('./models/users');
+const clientRoutes = require('./routes/clients/getClients'); // Importa las rutas
 
 // const userRoutes = require('./routes/whatsapp/users');
 // const mercadopagoRouter = require('./controllers/mercado-pago/mercadoPagoVinculate'); // Importa el router con las rutas de Mercado Pago
@@ -27,9 +28,13 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: ["https://gestion-smart.com", "https://gestion-smart-front-production.up.railway.app"],   
-     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], 
-    credentials: true, 
+    origin: [
+      "https://gestion-smart.com",
+      "https://gestion-smart-front-production.up.railway.app",
+      "http://localhost:3000"
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true,
   })
 );
 app.use(express.json());
@@ -47,6 +52,7 @@ app.use('/api/verify', whatsappVerify);
 app.use('/api/validateCode', checkCode);
 app.post('/api/twilio/receive-whatsapp', handleIncomingWhatsApp);
 app.get('/api/users', getUsers);
+app.use('/api', clientRoutes);
 
 // endpoints para whatsapp
 

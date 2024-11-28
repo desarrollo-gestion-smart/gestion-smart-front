@@ -20,60 +20,42 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
 const UserTable = () => {
-    const [users, setUsers] = useState([]);
+    const [clients, setClients] = useState([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const navigate = useNavigate();
 
-    // Obtener usuarios desde la API
+    // Obtener clientes desde la API
     useEffect(() => {
-        const fetchUsers = async () => {
+        const fetchClients = async () => {
             try {
-                const response = await axios.get('http://localhost:5001/api/users');
-                setUsers(response.data);
+                const response = await axios.get('https://gestion-smart-front-production.up.railway.app/api/clients');
+                setClients(response.data);
             } catch (error) {
-                console.error('Error fetching users:', error);
+                console.error('Error fetching clients:', error);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchUsers();
+        fetchClients();
     }, []);
 
     // Funciones para manejar acciones de editar y eliminar
     const handleEdit = (id) => {
-        console.log('Edit user with id:', id);
-        // Redirigir o abrir modal para editar el usuario
+        console.log('Edit client with id:', id);
     };
 
     const handleDelete = (id) => {
-        if (window.confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
-            console.log('Delete user with id:', id);
-            // Aquí puedes agregar lógica para eliminar al usuario de la base de datos
+        if (window.confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
+            console.log('Delete client with id:', id);
         }
     };
 
-    // Función para aplicar estilos según el estado
-    const getStatusStyle = (status) => {
-        if (status === 'active') {
-            return { color: 'green', fontWeight: 'bold' };
-        } else if (status === 'inactive') {
-            return { color: 'gray', fontWeight: 'bold' };
-        } else {
-            return { color: 'blue', fontWeight: 'bold' };
-        }
-    };
-
-    // Función para generar las iniciales del usuario
+    // Generar iniciales
     const getInitials = (firstName, lastName) => {
         return (firstName[0] + lastName[0]).toUpperCase();
-    };
-
-    // Función para redirigir a la página de registro
-    const handleAddUser = () => {
-        navigate('/pages/register/register2');
     };
 
     // Manejadores para paginación
@@ -104,9 +86,9 @@ const UserTable = () => {
                                     backgroundColor: 'darkgreen',
                                 },
                             }}
-                            onClick={handleAddUser}
+                            onClick={() => navigate('/pages/register/register2')}
                         >
-                            Agregar nuevo usuario
+                            Agregar nuevo cliente
                         </Button>
                     </Box>
 
@@ -115,42 +97,31 @@ const UserTable = () => {
                             <TableHead>
                                 <TableRow>
                                     <TableCell>Avatar</TableCell>
-                                    <TableCell>First Name</TableCell>
-                                    <TableCell>Last Name</TableCell>
-                                    <TableCell>Country</TableCell>
+                                    <TableCell>Nombre</TableCell>
+                                    <TableCell>Apellido</TableCell>
                                     <TableCell>Email</TableCell>
-                                    <TableCell>Status</TableCell>
-                                    <TableCell>Actions</TableCell>
+                                    <TableCell>WhatsApp</TableCell>
+                                    <TableCell>Acciones</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {users
+                                {clients
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                    .map((user) => (
-                                        <TableRow key={user._id}>
+                                    .map((client) => (
+                                        <TableRow key={client._id}>
                                             <TableCell>
-                                                <Avatar>{getInitials(user.firstName, user.lastName)}</Avatar>
+                                                <Avatar>{getInitials(client.firstName, client.lastName)}</Avatar>
                                             </TableCell>
-                                            <TableCell>{user.firstName}</TableCell>
-                                            <TableCell>{user.lastName}</TableCell>
-                                            <TableCell>{user.country || 'no values'}</TableCell>
-                                            <TableCell>{user.email}</TableCell>
+                                            <TableCell>{client.firstName}</TableCell>
+                                            <TableCell>{client.lastName}</TableCell>
+                                            <TableCell>{client.email}</TableCell>
+                                            <TableCell>{client.whatsapp}</TableCell>
                                             <TableCell>
-                                                <motion.div
-                                                    style={getStatusStyle(user.status || 'active')}
-                                                    initial={{ opacity: 0 }}
-                                                    animate={{ opacity: 1 }}
-                                                    transition={{ duration: 0.5 }}
-                                                >
-                                                    {user.status || 'active'}
-                                                </motion.div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <IconButton onClick={() => handleEdit(user._id)} color="primary" size="small">
+                                                <IconButton onClick={() => handleEdit(client._id)} color="primary" size="small">
                                                     <EditOutlined fontSize="small" />
                                                 </IconButton>
                                                 <IconButton
-                                                    onClick={() => handleDelete(user._id)}
+                                                    onClick={() => handleDelete(client._id)}
                                                     color="secondary"
                                                     size="small"
                                                     style={{ marginLeft: 10 }}
@@ -166,7 +137,7 @@ const UserTable = () => {
 
                     <TablePagination
                         component="div"
-                        count={users.length}
+                        count={clients.length}
                         page={page}
                         onPageChange={handleChangePage}
                         rowsPerPage={rowsPerPage}
