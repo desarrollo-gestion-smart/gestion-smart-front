@@ -75,7 +75,7 @@ const PaymentCards = () => {
 
       try {
         const response = await fetch(
-          "https://gestion-smart.com/api/mercadopago/wallet-status",
+          "http://gestion-smart.com/api/mercadopago/wallet-status",
           {
             method: "GET",
             headers: {
