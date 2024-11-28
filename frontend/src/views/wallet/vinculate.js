@@ -71,40 +71,7 @@ const PaymentCards = () => {
   const [loading, setLoading] = useState(true); // Estado de carga
 
   // Función para verificar el estado de la billetera
-  useEffect(() => {
-    const checkWalletStatus = async () => {
-      const token = localStorage.getItem("token"); // Obtener el token desde el localStorage
-
-      if (!token) {
-        console.error("Token no disponible en localStorage.");
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const response = await axios.get(
-          "https://gestion-smart-front-production.up.railway.app/api/mercadopago/wallet-status",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (response.status === 200) {
-          setWalletStatus(response.data); // Guardar el estado de la wallet
-        } else {
-          console.error("Error al verificar la wallet:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error al obtener el estado de la wallet:", error.message);
-      } finally {
-        setLoading(false); // Deshabilitar el estado de carga
-      }
-    };
-
-    checkWalletStatus();
-  }, []);
+  
 
   useEffect(() => {
     const checkWalletStatus = async () => {
@@ -128,10 +95,10 @@ const PaymentCards = () => {
         );
         console.log("Respuesta de la API:", response.data);
 
-        if (response.status === 200) {
-          setWalletStatus(response.data);
+        if (response.status === 200 && response.data.walletStatus) {
+          setWalletStatus(response.data.walletStatus); // Ajuste aquí
         } else {
-          console.error("Error al verificar la wallet:", response.statusText);
+          console.error("Estructura inesperada en la respuesta de la API:", response.data);
         }
       } catch (error) {
         console.error("Error al obtener el estado de la wallet:", error.message);
@@ -142,7 +109,6 @@ const PaymentCards = () => {
 
     checkWalletStatus();
   }, []);
-
   // Lógica para conectar Mercado Pago
   const handleConnect = (url) => {
     if (url.includes("mercadopago")) {
