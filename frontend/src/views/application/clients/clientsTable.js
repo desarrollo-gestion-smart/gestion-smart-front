@@ -76,7 +76,7 @@ const UserTable = () => {
                 </Box>
             ) : (
                 <>
-                    <Box sx={{ marginBottom: 2, textAlign: 'right' }}>
+                    {/* <Box sx={{ marginBottom: 2, textAlign: 'right' }}>
                         <Button
                             variant="contained"
                             sx={{
@@ -90,7 +90,7 @@ const UserTable = () => {
                         >
                             Agregar nuevo cliente
                         </Button>
-                    </Box>
+                    </Box> */}
 
                     <TableContainer component={Paper}>
                         <Table>
