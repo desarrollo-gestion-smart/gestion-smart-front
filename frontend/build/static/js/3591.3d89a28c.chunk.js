@@ -1,0 +1,29 @@
+"use strict";(self.webpackChunkgestion_smart=self.webpackChunkgestion_smart||[]).push([[3591],{33591:(e,r,t)=>{t.r(r),t.d(r,{default:()=>k});var s=t(72791),i=t(697),a=t(13239),n=t(39281),o=t(35527),l=t(79836),c=t(56890),d=t(35855),h=t(68745),m=t(53382),u=t(60220),v=t(13400),x=t(5446),Z=t(7195),p=t(84220),g=t(31243),f=t(57689),j=t(80184);const k=()=>{const[e,r]=(0,s.useState)([]),[t,k]=(0,s.useState)(!0),[S,w]=(0,s.useState)(0),[y,P]=(0,s.useState)(5);(0,f.s0)();(0,s.useEffect)((()=>{(async()=>{try{const e=await g.Z.get("https://gestion-smart-front-production.up.railway.app/api/clients");r(e.data)}catch(e){console.error("Error fetching clients:",e)}finally{k(!1)}})()}),[]);return(0,j.jsx)(i.Z,{sx:{position:"relative",minHeight:"100vh",padding:"20px"},children:t?(0,j.jsx)(i.Z,{textAlign:"center",padding:5,children:(0,j.jsx)(a.Z,{})}):(0,j.jsxs)(j.Fragment,{children:[(0,j.jsx)(n.Z,{component:o.Z,children:(0,j.jsxs)(l.Z,{children:[(0,j.jsx)(c.Z,{children:(0,j.jsxs)(d.Z,{children:[(0,j.jsx)(h.Z,{children:"Avatar"}),(0,j.jsx)(h.Z,{children:"Nombre"}),(0,j.jsx)(h.Z,{children:"Apellido"}),(0,j.jsx)(h.Z,{children:"Email"}),(0,j.jsx)(h.Z,{children:"WhatsApp"}),(0,j.jsx)(h.Z,{children:"Acciones"})]})}),(0,j.jsx)(m.Z,{children:e.slice(S*y,S*y+y).map((e=>{return(0,j.jsxs)(d.Z,{children:[(0,j.jsx)(h.Z,{children:(0,j.jsx)(u.Z,{children:(r=e.firstName,t=e.lastName,(r[0]+t[0]).toUpperCase())})}),(0,j.jsx)(h.Z,{children:e.firstName}),(0,j.jsx)(h.Z,{children:e.lastName}),(0,j.jsx)(h.Z,{children:e.email}),(0,j.jsx)(h.Z,{children:e.whatsapp}),(0,j.jsxs)(h.Z,{children:[(0,j.jsx)(v.Z,{onClick:()=>{return r=e._id,void console.log("Edit client with id:",r);var r},color:"primary",size:"small",children:(0,j.jsx)(Z.Z,{fontSize:"small"})}),(0,j.jsx)(v.Z,{onClick:()=>{return r=e._id,void(window.confirm("\xbfEst\xe1s seguro de que deseas eliminar este cliente?")&&console.log("Delete client with id:",r));var r},color:"secondary",size:"small",style:{marginLeft:10},children:(0,j.jsx)(p.Z,{fontSize:"small"})})]})]},e._id);var r,t}))})]})}),(0,j.jsx)(x.Z,{component:"div",count:e.length,page:S,onPageChange:(e,r)=>{w(r)},rowsPerPage:y,onRowsPerPageChange:e=>{P(parseInt(e.target.value,10)),w(0)}})]})})}},84220:(e,r,t)=>{t.d(r,{Z:()=>a});var s=t(74223),i=t(80184);const a=(0,s.Z)((0,i.jsx)("path",{d:"M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9zm7.5-5-1-1h-5l-1 1H5v2h14V4z"}),"DeleteOutline")},7195:(e,r,t)=>{t.d(r,{Z:()=>a});var s=t(74223),i=t(80184);const a=(0,s.Z)((0,i.jsx)("path",{d:"m14.06 9.02.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z"}),"EditOutlined")},13239:(e,r,t)=>{t.d(r,{Z:()=>z});var s=t(63366),i=t(87462),a=t(72791),n=t(59278),o=t(94419),l=t(52554),c=t(14036),d=t(61020),h=t(66934),m=t(75878),u=t(21217);function v(e){return(0,u.ZP)("MuiCircularProgress",e)}(0,m.Z)("MuiCircularProgress",["root","determinate","indeterminate","colorPrimary","colorSecondary","svg","circle","circleDeterminate","circleIndeterminate","circleDisableShrink"]);var x=t(80184);const Z=["className","color","disableShrink","size","style","thickness","value","variant"];let p,g,f,j,k=e=>e;const S=44,w=(0,l.F4)(p||(p=k`
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+`)),y=(0,l.F4)(g||(g=k`
+  0% {
+    stroke-dasharray: 1px, 200px;
+    stroke-dashoffset: 0;
+  }
+
+  50% {
+    stroke-dasharray: 100px, 200px;
+    stroke-dashoffset: -15px;
+  }
+
+  100% {
+    stroke-dasharray: 100px, 200px;
+    stroke-dashoffset: -125px;
+  }
+`)),P=(0,h.ZP)("span",{name:"MuiCircularProgress",slot:"Root",overridesResolver:(e,r)=>{const{ownerState:t}=e;return[r.root,r[t.variant],r[`color${(0,c.Z)(t.color)}`]]}})((e=>{let{ownerState:r,theme:t}=e;return(0,i.Z)({display:"inline-block"},"determinate"===r.variant&&{transition:t.transitions.create("transform")},"inherit"!==r.color&&{color:(t.vars||t).palette[r.color].main})}),(e=>{let{ownerState:r}=e;return"indeterminate"===r.variant&&(0,l.iv)(f||(f=k`
+      animation: ${0} 1.4s linear infinite;
+    `),w)})),b=(0,h.ZP)("svg",{name:"MuiCircularProgress",slot:"Svg",overridesResolver:(e,r)=>r.svg})({display:"block"}),C=(0,h.ZP)("circle",{name:"MuiCircularProgress",slot:"Circle",overridesResolver:(e,r)=>{const{ownerState:t}=e;return[r.circle,r[`circle${(0,c.Z)(t.variant)}`],t.disableShrink&&r.circleDisableShrink]}})((e=>{let{ownerState:r,theme:t}=e;return(0,i.Z)({stroke:"currentColor"},"determinate"===r.variant&&{transition:t.transitions.create("stroke-dashoffset")},"indeterminate"===r.variant&&{strokeDasharray:"80px, 200px",strokeDashoffset:0})}),(e=>{let{ownerState:r}=e;return"indeterminate"===r.variant&&!r.disableShrink&&(0,l.iv)(j||(j=k`
+      animation: ${0} 1.4s ease-in-out infinite;
+    `),y)})),z=a.forwardRef((function(e,r){const t=(0,d.i)({props:e,name:"MuiCircularProgress"}),{className:a,color:l="primary",disableShrink:h=!1,size:m=40,style:u,thickness:p=3.6,value:g=0,variant:f="indeterminate"}=t,j=(0,s.Z)(t,Z),k=(0,i.Z)({},t,{color:l,disableShrink:h,size:m,thickness:p,value:g,variant:f}),w=(e=>{const{classes:r,variant:t,color:s,disableShrink:i}=e,a={root:["root",t,`color${(0,c.Z)(s)}`],svg:["svg"],circle:["circle",`circle${(0,c.Z)(t)}`,i&&"circleDisableShrink"]};return(0,o.Z)(a,v,r)})(k),y={},z={},M={};if("determinate"===f){const e=2*Math.PI*((S-p)/2);y.strokeDasharray=e.toFixed(3),M["aria-valuenow"]=Math.round(g),y.strokeDashoffset=`${((100-g)/100*e).toFixed(3)}px`,z.transform="rotate(-90deg)"}return(0,x.jsx)(P,(0,i.Z)({className:(0,n.Z)(w.root,a),style:(0,i.Z)({width:m,height:m},z,u),ownerState:k,ref:r,role:"progressbar"},M,j,{children:(0,x.jsx)(b,{className:w.svg,ownerState:k,viewBox:"22 22 44 44",children:(0,x.jsx)(C,{className:w.circle,style:y,ownerState:k,cx:S,cy:S,r:(S-p)/2,fill:"none",strokeWidth:p})})}))}))}}]);
+//# sourceMappingURL=3591.3d89a28c.chunk.js.map

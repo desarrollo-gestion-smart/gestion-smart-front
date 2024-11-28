@@ -1,6 +1,5 @@
 {
     "name": "gestion-smart",
-    "homepage": "gestion-smart.com",
     "version": "3.7.0",
     "private": true,
     "dependencies": {
