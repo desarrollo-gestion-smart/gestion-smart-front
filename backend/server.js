@@ -29,8 +29,9 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "https://gestion-smart.com",
+      "https://gestion-smart.com/",
       "https://gestion-smart-front-production.up.railway.app",
+      "https://gestion-smart.com/register",
       "http://localhost:3000"
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
