@@ -302,6 +302,7 @@ const application = {
             id: 'contact',
             title: <FormattedMessage id="Marketing" />,
             type: 'item',
+            url:'/apps/contact/c-card',
             icon: icons.IconZoomCode
             // children: [
             //     // {
