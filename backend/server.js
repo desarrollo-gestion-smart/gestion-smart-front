@@ -342,7 +342,7 @@ app.get("/api/mercadopago/wallet-status", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-const PORT = 8080;
+const PORT = 5001;
 app.listen(PORT, () => {
   console.log(`Server running on ${PORT}`);
 });
