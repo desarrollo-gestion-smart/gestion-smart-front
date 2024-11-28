@@ -4,13 +4,9 @@ import { Link } from 'react-router-dom';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
-import { Box, Tab, Tabs } from '@mui/material';
+import { Box, Tab, Tabs, Typography } from '@mui/material';
 
 // project imports
-import Profile from './Profile';
-import Billing from './Billing';
-import Security from './Security';
-import Notifications from './Notifications';
 import MainCard from 'ui-component/cards/MainCard';
 
 // tabs
@@ -40,9 +36,35 @@ function a11yProps(index) {
 const Profile3 = () => {
     const theme = useTheme();
     const [value, setValue] = React.useState(0);
+
+    // Bandera de "Próximamente"
+    const [isComingSoon, setIsComingSoon] = React.useState(true);
+
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
+
+    if (isComingSoon) {
+        return (
+            <MainCard title="Mi perfil">
+                <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    height="300px"
+                    sx={{
+                        backgroundColor: '#f8f9fa',
+                        borderRadius: 1,
+                        textAlign: 'center',
+                    }}
+                >
+                    <Typography variant="h3" color="#97C703">
+                        Próximamente Disponible
+                    </Typography>
+                </Box>
+            </MainCard>
+        );
+    }
 
     return (
         <MainCard title="Account">
@@ -78,16 +100,16 @@ const Profile3 = () => {
                     <Tab component={Link} to="#" label="Notifications" {...a11yProps(3)} />
                 </Tabs>
                 <TabPanel value={value} index={0}>
-                    <Profile />
+                    <Typography>Profile Content</Typography>
                 </TabPanel>
                 <TabPanel value={value} index={1}>
-                    <Billing />
+                    <Typography>Billing Content</Typography>
                 </TabPanel>
                 <TabPanel value={value} index={2}>
-                    <Security />
+                    <Typography>Security Content</Typography>
                 </TabPanel>
                 <TabPanel value={value} index={3}>
-                    <Notifications />
+                    <Typography>Notifications Content</Typography>
                 </TabPanel>
             </div>
         </MainCard>

@@ -30,7 +30,7 @@ const ContactCardPage = () => {
                         textAlign: 'center',
                     }}
                 >
-                    <Typography variant="h3" color="textSecondary">
+                    <Typography variant="h3" color="#97C703">
                         Próximamente Disponible
                     </Typography>
                 </Box>
