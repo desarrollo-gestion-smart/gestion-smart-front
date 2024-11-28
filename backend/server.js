@@ -307,33 +307,37 @@ app.get("/api/mercadopago/callback", async (req, res) => {
 
 
 app.get("/api/mercadopago/wallet-status", async (req, res) => {
-  console.log("Solicitud recibida:", req.headers);
+  console.log("Solicitud a wallet-status recibida:", req.headers);
 
-  // Verificar token
-  if (!req.headers.authorization) {
-    console.error("Token faltante");
-    return res.status(401).json({ error: "Token faltante" });
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    console.error("Token de autorización faltante");
+    return res.status(401).json({ error: "Token de autorización faltante" });
   }
 
   try {
-    const token = req.headers.authorization.split(" ")[1];
+    const token = authHeader.split(" ")[1];
     console.log("Token recibido:", token);
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     console.log("Token decodificado:", decoded);
 
-    // Buscar usuario en la base de datos
     const user = await User.findById(decoded.userId);
     if (!user) {
       console.error("Usuario no encontrado");
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
-    console.log("Usuario encontrado:", user);
+    if (!user.wallet || !user.wallet.mercadoPago) {
+      console.error("Wallet no vinculada");
+      return res.status(404).json({ error: "Wallet no vinculada" });
+    }
 
-    res.status(200).json({ walletStatus: user.wallet?.mercadoPago || null });
+    console.log("Estado de wallet:", user.wallet.mercadoPago);
+    res.status(200).json({ walletStatus: user.wallet.mercadoPago });
   } catch (error) {
-    console.error("Error en la solicitud:", error.message);
+    console.error("Error al verificar el estado de la wallet:", error.message);
     res.status(500).json({ error: error.message });
   }
 });

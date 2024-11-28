@@ -60,10 +60,10 @@ const MercadoPagoCallback = () => {
   }, []);
 
   return (
-    <Box sx={{ p: 3, display: "flex", flexDirection: "column", alignItems: "center" }}>
+    <Box sx={{ p: 3, display: "flex", flexDirection: "column", alignItems: "center", marginTop:'300px' }}>
       <CircularProgress />
-      <Typography variant="h6" sx={{ mt: 2 }}>
-        Procesando tu pago....
+      <Typography variant="h5" sx={{ mt: 2 }}>
+       Procesando vinculacion
       </Typography>
     </Box>
   );

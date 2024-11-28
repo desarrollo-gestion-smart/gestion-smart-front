@@ -9,6 +9,7 @@ import {
   Button,
   Box,
   Chip,
+  CircularProgress,
 } from "@mui/material";
 
 // Importa los logos directamente
@@ -73,6 +74,12 @@ const PaymentCards = () => {
     const checkWalletStatus = async () => {
       const token = localStorage.getItem("token"); // Obtener el token desde el localStorage
 
+      if (!token) {
+        console.error("Token no disponible en localStorage.");
+        setLoading(false);
+        return;
+      }
+
       try {
         const response = await fetch(
           "https://gestion-smart-front-production.up.railway.app/api/mercadopago/wallet-status",
@@ -83,14 +90,12 @@ const PaymentCards = () => {
             },
           }
         );
-        
 
         if (!response.ok) {
           throw new Error("Error al verificar la wallet");
         }
 
         const data = await response.json();
-
         setWalletStatus(data); // Guardar el estado de la wallet
       } catch (error) {
         console.error("Error al obtener el estado de la wallet:", error.message);
@@ -102,38 +107,33 @@ const PaymentCards = () => {
     checkWalletStatus();
   }, []);
 
-
   useEffect(() => {
     const processCallback = async () => {
-        const query = new URLSearchParams(window.location.search);
-        const code = query.get('code');
-        const state = query.get('state');
+      const query = new URLSearchParams(window.location.search);
+      const code = query.get("code");
+      const state = query.get("state");
 
-        if (code && state) {
-            try {
-                // Enviar el código y estado al backend para procesarlos
-                const response = await axios.post('/api/mercadopago/callback', {
-                  code,
-                  state,
-              });
-                console.log(response)
-                // Supongamos que el backend responde con una URL a la que redirigir
-                const { redirectUrl } = response.data;
-                window.location.href = "redirectUrl"; // Redirección usando window.location
-                console.log(response.data)
-            } catch (error) {
-                console.error('Error al procesar el callback de MercadoPago:', error);
-                // Redirigir a una página de error utilizando window.location
-                // window.location.href = '/mercadopago/error';
+      if (code && state) {
+        try {
+          const response = await axios.post(
+            "https://gestion-smart-front-production.up.railway.app/api/mercadopago/callback",
+            {
+              code,
+              state,
             }
-        } else {
-            // Parámetros faltantes, redirigir a error
-            // window.location.href = '/mercadopago/error';
+          );
+          const { redirectUrl } = response.data;
+          window.location.href = redirectUrl;
+        } catch (error) {
+          console.error("Error al procesar el callback de MercadoPago:", error.message);
         }
+      } else {
+        console.error("Parámetros faltantes en el callback.");
+      }
     };
 
     processCallback();
-}, []);
+  }, []);
 
   const handleConnect = async (url) => {
     if (url.includes("mercadopago")) {
@@ -147,18 +147,24 @@ const PaymentCards = () => {
 
       const popup = window.open(authorizationUrl, "_blank");
 
-      // Verifica cierre de ventana
       const pollTimer = setInterval(() => {
         if (popup.closed) {
           clearInterval(pollTimer);
-          window.location.reload(); // Refresca la página para actualizar el estado
+          window.location.reload();
         }
       }, 500);
     }
   };
 
   if (loading) {
-    return <Typography variant="h6">Cargando...</Typography>;
+    return (
+      <Box sx={{ textAlign: "center", marginTop: "20px" }}>
+        <CircularProgress />
+        <Typography variant="h6" sx={{ marginTop: "10px" }}>
+          Cargando...
+        </Typography>
+      </Box>
+    );
   }
 
   return (
@@ -217,7 +223,10 @@ const PaymentCards = () => {
                     color="primary"
                     sx={{ fontWeight: "bold", mt: 2 }}
                   >
-                    Vinculado <br /> ID: {walletStatus.mercadoPagoId}
+                    Vinculado <br /> ID: {walletStatus.mercadoPagoId} <br />
+                    Fecha:{" "}
+                    {walletStatus.linkedAt &&
+                      new Date(walletStatus.linkedAt).toLocaleDateString()}
                   </Typography>
                 ) : (
                   <Button
