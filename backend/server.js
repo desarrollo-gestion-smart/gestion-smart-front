@@ -193,6 +193,7 @@ app.post('/webhook', (req, res) => {
   res.status(200).json({ message: 'Respuesta enviada correctamente' });
 });
 
+
 // Función para enviar mensajes a través de Twilio
 const sendMessageToUser = (to, message) => {
   const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
@@ -301,6 +302,39 @@ app.get("/api/mercadopago/callback", async (req, res) => {
       redirectUrl: "https://gestion-smart.com/apps/wallet/vinculate?success=false",
       error: error.response?.data || error.message,
     });
+  }
+});
+
+
+app.get("/api/mercadopago/wallet-status", async (req, res) => {
+  console.log("Solicitud recibida:", req.headers);
+
+  // Verificar token
+  if (!req.headers.authorization) {
+    console.error("Token faltante");
+    return res.status(401).json({ error: "Token faltante" });
+  }
+
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    console.log("Token recibido:", token);
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("Token decodificado:", decoded);
+
+    // Buscar usuario en la base de datos
+    const user = await User.findById(decoded.userId);
+    if (!user) {
+      console.error("Usuario no encontrado");
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    console.log("Usuario encontrado:", user);
+
+    res.status(200).json({ walletStatus: user.wallet?.mercadoPago || null });
+  } catch (error) {
+    console.error("Error en la solicitud:", error.message);
+    res.status(500).json({ error: error.message });
   }
 });
 const PORT = 5001;
