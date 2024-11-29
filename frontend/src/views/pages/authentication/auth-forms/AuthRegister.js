@@ -46,7 +46,7 @@ const JWTRegister = ({ ...others }) => {
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
-            const response = await fetch('https://gestion-smart-front-production.up.railway.app/api/users/register', {
+            const response = await fetch('https://vigilant-prosperity-production.up.railway.app/api/users/register', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
