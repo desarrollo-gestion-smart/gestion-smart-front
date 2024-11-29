@@ -108,7 +108,13 @@
         "uuid": "^9.0.0",
         "web-vitals": "^3.4.0",
         "yup": "^1.2.0"
+        
     },
+    "engines": {
+  "node": ">=20"
+},
+
+
     "scripts": {
         "start": "react-scripts start",
         "build-stage": "env-cmd -f .env.qa react-scripts build",
