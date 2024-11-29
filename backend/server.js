@@ -7,8 +7,8 @@ const whatsappVerify = require('./whatsapp-verify/verify');
 const checkCode = require('./whatsapp-verify/checkCode');
 const sendEmail = require('./controllers/emailSendRegister');
 const { registerUser, getUsers } = require('./controllers/userController');
-const { handleIncomingWhatsApp } = require('./controllers/twilioController');
-const twilio = require('twilio');
+// const { handleIncomingWhatsApp } = require('./controllers/twilioController');
+// const twilio = require('twilio');
 const diacritics = require('diacritics');
 // const payoneerRouter = require('./controllers/payoneer/walletVinculate');
 const {findById} = require("./models/users");
@@ -49,13 +49,14 @@ mongoose.connect(MONGODB_URI)
 
 // Rutas existentes
 app.use('/api/users', authRoutes);
-app.use('/api/verify', whatsappVerify);
-app.use('/api/validateCode', checkCode);
-app.post('/api/twilio/receive-whatsapp', handleIncomingWhatsApp);
+// app.use('/api/verify', whatsappVerify);
+// app.use('/api/validateCode', checkCode);
+// app.post('/api/twilio/receive-whatsapp', handleIncomingWhatsApp);
 app.get('/api/users', getUsers);
 app.use('/api', clientRoutes);
 
 // endpoints para whatsapp
+// console.log('authRoutes:', authRoutes);
 
 // app.use('/user/contact', userRoutes)
 
