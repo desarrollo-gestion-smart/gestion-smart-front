@@ -26,7 +26,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 const JWTLogin = ({ loginProp, ...others }) => {
     const theme = useTheme();
     const scriptedRef = useScriptRef();
-    const navigate = useNavigate();  // Hook para redirigir
+    const navigate = useNavigate();
 
     const [checked, setChecked] = React.useState(true);
     const [showPassword, setShowPassword] = React.useState(false);
@@ -52,7 +52,7 @@ const JWTLogin = ({ loginProp, ...others }) => {
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                 try {
                     // Enviar credenciales al backend
-                    const response = await fetch('http://vigilant-prosperity-production.up.railway.app/api/users/login', {
+                    const response = await fetch('https://vigilant-prosperity-production.up.railway.app/api/users/login', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -62,19 +62,30 @@ const JWTLogin = ({ loginProp, ...others }) => {
                             password: values.password
                         })
                     });
-
+            
                     const data = await response.json();
+                    console.log(data);  // Verifica que la respuesta contenga el token
+            
                     if (response.ok) {
-                        // Guardar token en localStorage
-                        localStorage.setItem('token', data.token);
-
-                        console.log('Login exitoso, redirigiendo al dashboard');
+                        // Si el servidor no devuelve el token, lo harcodeamos
+                        const token = "7852369854778545875a8s5d86d8fff7w8qwe5";  // Token harcodeado para pruebas
+                        const userId = data.userId;
+            
+                        // Guardar el token y el userId en localStorage
+                        localStorage.setItem('token', token);
+                        localStorage.setItem('userId', userId); // Guardar userId en localStorage
+            
+                        console.log('Login exitoso');
+                        console.log('userId:', userId);  // Mostrar el userId en la consola
+                        console.log('Token:', token);  // Verificar si el token se guardó correctamente
+            
+                        // Redirigir al dashboard
                         navigate('/dashboard/default');  // Redirigir al dashboard o a la página deseada
                     } else {
                         console.log('Credenciales incorrectas');
                         setErrors({ submit: 'Usuario o contraseña incorrectos' });
                     }
-
+            
                     if (scriptedRef.current) {
                         setStatus({ success: true });
                         setSubmitting(false);

@@ -6,7 +6,7 @@ import { Link, Typography, Stack } from '@mui/material';
 const AuthFooter = () => (
     <Stack direction="row" justifyContent="space-between">
         <Typography variant="subtitle2" component={Link} href="#" target="_blank" underline="hover">
-            version 1.0.7
+            version 1.0.8
         </Typography>
       
     </Stack>

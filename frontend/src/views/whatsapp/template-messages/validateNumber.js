@@ -25,19 +25,26 @@ const WhatsAppVerifier = () => {
   const [invitation, setInvitation] = useState('');
   const [loading, setLoading] = useState(false); // Estado de carga
   const [checkingNumber, setCheckingNumber] = useState(false); // Estado de verificación del número
-
   const handleSubmit = async () => {
     if (phoneNumber) {
       const userId = localStorage.getItem('userId');
+  
+      // Verificar que tengamos el userId
       if (!userId) {
         setError(true);
         setMessage('No se ha encontrado el ID de usuario en el almacenamiento.');
         return;
       }
-
+  
       setCheckingNumber(true); // Empieza la verificación del número
       const number = phoneNumber; // Se envía sin el '+'
-
+  
+      // Logs antes de enviar la solicitud
+      console.log('[DEBUG] userId:', userId);  // Mostrar userId
+      console.log('[DEBUG] Verificando número:', number);  // Mostrar número
+      console.log('[DEBUG] Enviando solicitud de verificación con los siguientes datos:');
+      console.log('[DEBUG] Datos:', { number, userId }); // Log de los datos que se están enviando en la solicitud
+  
       try {
         // Verificar si el número ya está vinculado
         const checkNumberResponse = await fetch('https://vigilant-prosperity-production.up.railway.app/api/v1/check-number', {
@@ -45,40 +52,50 @@ const WhatsAppVerifier = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ number }),
+          body: JSON.stringify({ number, userId }), // Solo enviamos userId y number
         });
-
+  
+        console.log('[DEBUG] Respuesta de verificación del número:', checkNumberResponse.status); // Log de la respuesta del servidor
         const checkNumberData = await checkNumberResponse.json();
-
-        if (checkNumberResponse.ok && checkNumberData.isLinked) {
-          setError(true);
-          setMessage('Este número ya está vinculado a una cuenta.');
-          setCheckingNumber(false);
-          return;
-        }
-
-        // Si el número no está vinculado, enviamos el código
-        setLoading(true); // Activar la carga
-
-        const verifyRequest = fetch('https://vigilant-prosperity-production.up.railway.app/api/v1/instances/create', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ id: userId, number }),
-        });
-
-        const verifyResponse = await verifyRequest;
-        const verifyData = await verifyResponse.json();
-
-        if (verifyResponse.ok && verifyData) {
-          setSuccess(true);
-          setMessage(`El código ha sido enviado a ${number}`);
-          setPairingCode(verifyData.message.pairingCode || 'No pairing code');
-          setInvitation(verifyData.invitation || '');
+        console.log('[DEBUG] Respuesta de la verificación del número:', checkNumberData); // Log de los datos de la respuesta
+  
+        // Verificar si la respuesta fue exitosa
+        if (checkNumberResponse.ok) {
+          if (checkNumberData.isLinked) {
+            setError(true);
+            setMessage('Este número ya está vinculado a una cuenta.');
+            setCheckingNumber(false);
+            return;
+          }
+  
+          // Si el número no está vinculado, enviamos el código
+          setLoading(true); // Activar la carga
+          console.log('[DEBUG] Enviando solicitud de verificación con los siguientes datos:', { id: userId, number }); // Log de los datos enviados
+  
+          const verifyResponse = await fetch('https://vigilant-prosperity-production.up.railway.app/api/v1/instances/create', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id: userId, number }), // Solo enviamos userId y number
+          });
+  
+          console.log('[DEBUG] Respuesta de la solicitud de verificación:', verifyResponse.status); // Log de la respuesta
+          const verifyData = await verifyResponse.json();
+          console.log('[DEBUG] Datos recibidos de la verificación:', verifyData); // Log de los datos de la respuesta
+  
+          if (verifyResponse.ok && verifyData) {
+            setSuccess(true);
+            setMessage(`El código ha sido enviado a ${number}`);
+            setPairingCode(verifyData.message.pairingCode || 'No pairing code');
+            setInvitation(verifyData.invitation || '');
+          } else {
+            setError(true);
+            setMessage(verifyData?.error || 'Hubo un error al enviar el código.');
+          }
         } else {
           setError(true);
-          setMessage(verifyData?.error || 'Hubo un error al enviar el código.');
+          setMessage('Hubo un error con la verificación del número.');
         }
       } catch (error) {
         setError(true);
@@ -93,6 +110,7 @@ const WhatsAppVerifier = () => {
       setMessage('Por favor, ingresa un número de WhatsApp válido.');
     }
   };
+  
 
   return (
     <ThemeProvider theme={theme}>
@@ -234,7 +252,7 @@ const WhatsAppVerifier = () => {
             >
               <Typography variant="h6">
                 <a href={invitation} target="_blank" rel="noopener noreferrer" style={{ color: '#000', textDecoration: 'none' }}>
-                  Invitación WhatsApp
+                  Haga clic aquí para unirse a la invitación.
                 </a>
               </Typography>
             </Box>

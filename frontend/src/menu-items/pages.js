@@ -152,13 +152,13 @@ const pages = {
                             url: '/pages/login/login3',
                             target: true
                         },
-                        {
-                            id: 'register3',
-                            title: <FormattedMessage id="register" />,
-                            type: 'item',
-                            url: '/pages/register/register3',
-                            target: true
-                        },
+                        // {
+                        //     id: 'register3',
+                        //     title: <FormattedMessage id="register" />,
+                        //     type: 'item',
+                        //     url: '/pages/register/register3',
+                        //     target: true
+                        // },
                         {
                             id: 'forgot-password3',
                             title: <FormattedMessage id="forgot-password" />,
