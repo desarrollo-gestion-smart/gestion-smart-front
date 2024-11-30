@@ -58,7 +58,7 @@ const JWTLogin = ({ loginProp, ...others }) => {
                 password: Yup.string().max(255).required('La contraseña es obligatoria')
             })}
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-                setLoading(true);  // Iniciar la carga
+                setLoading(true);  
                 try {
                     const response = await fetch("http://vigilant-prosperity-production.up.railway.app/api/users/login", {
                         method: 'POST',
