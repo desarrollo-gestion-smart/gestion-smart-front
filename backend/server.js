@@ -7,38 +7,35 @@ const whatsappVerify = require('./whatsapp-verify/verify');
 const checkCode = require('./whatsapp-verify/checkCode');
 const sendEmail = require('./controllers/emailSendRegister');
 const { registerUser, getUsers } = require('./controllers/userController');
-// const { handleIncomingWhatsApp } = require('./controllers/twilioController');
-// const twilio = require('twilio');
 const diacritics = require('diacritics');
-// const payoneerRouter = require('./controllers/payoneer/walletVinculate');
 const {findById} = require("./models/users");
 const authenticateJWT = require('./middleware/authmiddleware');
 const User = require('./models/users');
 const clientRoutes = require('./routes/clients/getClients'); // Importa las rutas
-
-// const userRoutes = require('./routes/whatsapp/users');
-// const mercadopagoRouter = require('./controllers/mercado-pago/mercadoPagoVinculate'); // Importa el router con las rutas de Mercado Pago
 const mercadopagoRouter = express.Router();
 
-
 require('dotenv').config();
-
 const app = express();
 
 // Middleware
 app.use(
   cors({
     origin: [
-      "https://gestion-smart.com","https://gestion-smart-testing.com",
+      "https://gestion-smart.com",
+      "https://gestion-smart-testing.com",
       "http://vigilant-prosperity-production.up.railway.app",
       "https://vigilant-prosperity-production.up.railway.app",
       "https://gestion-smart.com/register",
-      "http://localhost:3000"
+      "http://localhost:3000",  // El frontend local
     ],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],  // Asegúrate de permitir todos los métodos necesarios
+    allowedHeaders: ["Content-Type"],  // Permitir encabezados específicos
+    credentials: true,  // Permitir cookies y credenciales
   })
 );
+
+// Asegurarse de que las solicitudes OPTIONS no redirijan, y que se respondan adecuadamente
+app.options('*', cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -75,6 +72,8 @@ app.post('/api/send-email', async (req, res) => {
     res.status(500).json({ message: 'Error al enviar el correo', error: error.message });
   }
 });
+
+
 
 // Integrar el servicio de Payoneer
 // app.use('/api/payoneer', payoneerRouter);

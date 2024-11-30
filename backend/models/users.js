@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
+    firstName: { type: String },
+    lastName: { type: String },
+    email: { type: String },
     password: { type: String },
     country: { type: String },
     status: { type: String, enum: ['active', 'inactive'] },
@@ -20,19 +19,8 @@ const userSchema = new mongoose.Schema({
     },
 });
 
-// Middleware para cifrar la contraseña antes de guardar el usuario
-userSchema.pre('save', async function (next) {
-    if (this.isModified('password')) {
-        const salt = await bcrypt.genSalt(10);
-        this.password = await bcrypt.hash(this.password, salt);
-    }
-    next();
-});
-
-// Método para comparar contraseñas
-userSchema.methods.comparePassword = async function (candidatePassword) {
-    return bcrypt.compare(candidatePassword, this.password);
-};
+// Ya no hay necesidad de un middleware para hashear la contraseña
+// Eliminamos la función pre-save que cifraba la contraseña
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;
