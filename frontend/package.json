@@ -116,7 +116,7 @@
     "scripts": {
         "start": "serve build -s -n -l $PORT",
         "build-stage": "env-cmd -f .env.qa react-scripts build",
-        "build": "react-scripts build",
+        "build": "echo No build required",
         "dev": "react-scripts start",
         "lint": "eslint --ext .js,.jsx ./src",
         "test": "react-scripts test",
