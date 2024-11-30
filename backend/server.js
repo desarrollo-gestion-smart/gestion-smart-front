@@ -25,7 +25,7 @@ app.use(
       "https://gestion-smart-testing.com",
       "http://vigilant-prosperity-production.up.railway.app",
       "https://vigilant-prosperity-production.up.railway.app",
-      "https://gestion-smart.com/register",
+      
       "http://localhost:3000",  // El frontend local
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],  // Asegúrate de permitir todos los métodos necesarios
