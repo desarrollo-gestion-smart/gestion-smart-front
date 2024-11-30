@@ -113,7 +113,7 @@
     "scripts": {
         "start": "react-scripts start",
         "build-stage": "env-cmd -f .env.qa react-scripts build",
-        "build": "react-script-build",
+        "build": "react-scripts build",
         "dev": "react-scripts start",
         "lint": "eslint --ext .js,.jsx ./src",
         "test": "react-scripts test",
