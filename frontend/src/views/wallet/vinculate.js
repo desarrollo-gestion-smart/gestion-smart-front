@@ -114,7 +114,7 @@ const PaymentCards = () => {
     if (url.includes("mercadopago")) {
       const clientId = "275793137258734";
       const redirectUri =
-        "https://gestion-smart.com/vinculate/mercadopago/callback";
+        "https://gestion-smart-testing.com/vinculate/mercadopago/callback";
       const token = localStorage.getItem("token");
 
       const authorizationUrl = `https://auth.mercadopago.com/authorization?client_id=${clientId}&response_type=code&platform_id=mp&redirect_uri=${encodeURIComponent(

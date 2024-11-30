@@ -30,7 +30,8 @@ app.use(
   cors({
     origin: [
       "https://gestion-smart.com","https://gestion-smart-testing.com",
-      "https://gestion-smart-front-production.up.railway.app",
+      "http://vigilant-prosperity-production.up.railway.app",
+      "https://vigilant-prosperity-production.up.railway.app",
       "https://gestion-smart.com/register",
       "http://localhost:3000"
     ],
