@@ -114,9 +114,9 @@
         "node": ">=20"
     },
     "scripts": {
-        "start": "serve build -s -n -l $PORT",
+        "start": "react-scripts start",
         "build-stage": "env-cmd -f .env.qa react-scripts build",
-        "build": "echo No build required",
+        "build": "react-script-build",
         "dev": "react-scripts start",
         "lint": "eslint --ext .js,.jsx ./src",
         "test": "react-scripts test",

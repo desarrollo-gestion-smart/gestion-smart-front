@@ -220,17 +220,17 @@ const application = {
                             id: 'premios',
                             title: <FormattedMessage id="Premios" />,
                             type: 'item',
-                            url: '/apps/customer/order-details'
+                            url: '/apps/customer/product'
                         }
                     ]
                 },
-                {
-                    id: 'product',
-                    title: <FormattedMessage id="Premios" />,
-                    type: 'item',
-                    url: '/apps/customer/product',
-                    breadcrumbs: false
-                }
+                // {
+                //     id: 'product',
+                //     title: <FormattedMessage id="Premios" />,
+                //     type: 'item',
+                //     url: '/apps/customer/product',
+                //     breadcrumbs: false
+                // }
                 
             ]
         },

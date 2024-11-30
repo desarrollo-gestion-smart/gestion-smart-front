@@ -30,7 +30,7 @@ const UserTable = () => {
     useEffect(() => {
         const fetchClients = async () => {
             try {
-                const response = await axios.get('https://gestion-smart-front-production.up.railway.app/api/clients');
+                const response = await axios.get('https://vigilant-prosperity-production.up.railway.app/api/clients');
                 setClients(response.data);
             } catch (error) {
                 console.error('Error fetching clients:', error);
