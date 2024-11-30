@@ -86,7 +86,7 @@ const PaymentCards = () => {
 
       try {
         const response = await axios.get(
-          "https://gestion-smart-front-production.up.railway.app/api/mercadopago/wallet-status",
+          "https://vigilant-prosperity-production.up.railway.app/api/mercadopago/wallet-status",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -101,7 +101,15 @@ const PaymentCards = () => {
           console.error("Estructura inesperada en la respuesta de la API:", response.data);
         }
       } catch (error) {
-        console.error("Error al obtener el estado de la wallet:", error.message);
+        console.error("Error al obtener el estado de la wallet:", error);
+        // Detalles adicionales para la depuración
+        if (error.response) {
+          console.error("Respuesta del servidor:", error.response);
+        } else if (error.request) {
+          console.error("No se recibió respuesta del servidor:", error.request);
+        } else {
+          console.error("Error al configurar la solicitud:", error.message);
+        }
       } finally {
         setLoading(false);
       }

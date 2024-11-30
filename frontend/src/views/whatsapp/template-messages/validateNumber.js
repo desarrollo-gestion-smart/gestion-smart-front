@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, ThemeProvider, createTheme } from '@mui/material';
+import { TextField, Button, Box, Typography, ThemeProvider, createTheme, CircularProgress } from '@mui/material';
 
 // Custom theme
 const theme = createTheme({
@@ -23,6 +23,8 @@ const WhatsAppVerifier = () => {
   const [error, setError] = useState(false);
   const [pairingCode, setPairingCode] = useState('');
   const [invitation, setInvitation] = useState('');
+  const [loading, setLoading] = useState(false); // Estado de carga
+  const [checkingNumber, setCheckingNumber] = useState(false); // Estado de verificación del número
 
   const handleSubmit = async () => {
     if (phoneNumber) {
@@ -33,12 +35,32 @@ const WhatsAppVerifier = () => {
         return;
       }
 
+      setCheckingNumber(true); // Empieza la verificación del número
       const number = phoneNumber; // Se envía sin el '+'
 
-      console.log('Información que se va a enviar:', { id: userId, number });
-
       try {
-        const verifyRequest = fetch('https://backend-api-whatsapp-production.up.railway.app/api/v1/instances/create', {
+        // Verificar si el número ya está vinculado
+        const checkNumberResponse = await fetch('https://vigilant-prosperity-production.up.railway.app/api/v1/check-number', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ number }),
+        });
+
+        const checkNumberData = await checkNumberResponse.json();
+
+        if (checkNumberResponse.ok && checkNumberData.isLinked) {
+          setError(true);
+          setMessage('Este número ya está vinculado a una cuenta.');
+          setCheckingNumber(false);
+          return;
+        }
+
+        // Si el número no está vinculado, enviamos el código
+        setLoading(true); // Activar la carga
+
+        const verifyRequest = fetch('https://vigilant-prosperity-production.up.railway.app/api/v1/instances/create', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -62,6 +84,9 @@ const WhatsAppVerifier = () => {
         setError(true);
         setMessage('Hubo un error con la conexión al servidor.');
         console.error(error);
+      } finally {
+        setLoading(false); // Desactivar la carga
+        setCheckingNumber(false); // Finaliza la verificación del número
       }
     } else {
       setError(true);
@@ -127,7 +152,7 @@ const WhatsAppVerifier = () => {
               +
             </Typography>
             <TextField
-              placeholder="ej: 541123654789"
+              placeholder="ej: 5491123654789"
               variant="standard"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value.replace(/[^0-9]/g, ''))} // Solo números
@@ -155,9 +180,18 @@ const WhatsAppVerifier = () => {
               fontWeight: 'bold',
               textTransform: 'none',
               borderRadius: '5px',
+              position: 'relative',
             }}
+            disabled={loading || checkingNumber} // Deshabilitar el botón mientras está cargando o verificando
           >
-            Enviar Código
+            {loading || checkingNumber ? (
+              <>
+                <CircularProgress size={24} sx={{ position: 'absolute', left: '50%', top: '50%', marginLeft: '-12px', marginTop: '-12px' }} />
+                <Typography variant="button" sx={{ marginLeft: '35px' }}>Esperando respuesta...</Typography>
+              </>
+            ) : (
+              'Enviar Código'
+            )}
           </Button>
           {message && (
             <Box
@@ -184,7 +218,7 @@ const WhatsAppVerifier = () => {
                 fontSize: '16px',
               }}
             >
-              <Typography variant="h6">Ingrese este codigo en su Whatsapp: {pairingCode}</Typography>
+              <Typography variant="h6">Ingrese este código en su WhatsApp: {pairingCode}</Typography>
             </Box>
           )}
           {invitation && (

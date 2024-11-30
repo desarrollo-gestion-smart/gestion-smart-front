@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import {
     Box,
@@ -14,8 +14,7 @@ import {
     InputAdornment,
     InputLabel,
     OutlinedInput,
-    Typography,
-    CircularProgress,  // Importar CircularProgress
+    Typography
 } from '@mui/material';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
@@ -27,11 +26,10 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 const JWTLogin = ({ loginProp, ...others }) => {
     const theme = useTheme();
     const scriptedRef = useScriptRef();
-    const navigate = useNavigate();
+    const navigate = useNavigate();  // Hook para redirigir
 
     const [checked, setChecked] = React.useState(true);
     const [showPassword, setShowPassword] = React.useState(false);
-    const [loading, setLoading] = React.useState(false); // Estado de carga
 
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword);
@@ -40,12 +38,6 @@ const JWTLogin = ({ loginProp, ...others }) => {
     const handleMouseDownPassword = (event) => {
         event.preventDefault();
     };
-
-    // Función para almacenar el token y userId en localStorage
-    function setItemAndLog(key, value) {
-        localStorage.setItem(key, value);
-        console.log(`Se ha guardado en localStorage: ${key} = ${value}`);
-    }
 
     return (
         <Formik
@@ -58,12 +50,12 @@ const JWTLogin = ({ loginProp, ...others }) => {
                 password: Yup.string().max(255).required('La contraseña es obligatoria')
             })}
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-                setLoading(true);  
                 try {
-                    const response = await fetch("https://vigilant-prosperity-production.up.railway.app/api/users/login", {
+                    // Enviar credenciales al backend
+                    const response = await fetch('http://vigilant-prosperity-production.up.railway.app/api/users/login', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
+                            'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
                             email: values.email,
@@ -72,35 +64,28 @@ const JWTLogin = ({ loginProp, ...others }) => {
                     });
 
                     const data = await response.json();
-                    console.log('Respuesta de la API:', data);  // Verifica toda la respuesta
-
                     if (response.ok) {
-                        const token = data.token || data.accessToken || data.jwt; // Ajusta según el nombre correcto
-                        const userId = data.userId; // Asegúrate de que el backend esté devolviendo el `userId`
+                        // Guardar token en localStorage
+                        localStorage.setItem('token', data.token);
 
-                        if (token && userId) {
-                            // Guarda el token y el userId en localStorage
-                            localStorage.setItem('token', token);
-                            localStorage.setItem('userId', userId);
-                            console.log('Login exitoso, redirigiendo al dashboard');
-                            navigate('/dashboard/default');  // Redirigir al dashboard o la página deseada
-                        } else {
-                            console.log('Token o userId no encontrado en la respuesta de la API.');
-                        }
+                        console.log('Login exitoso, redirigiendo al dashboard');
+                        navigate('/dashboard/default');  // Redirigir al dashboard o a la página deseada
                     } else {
-                        setErrors({ submit: data.message || 'Error en el login' });
                         console.log('Credenciales incorrectas');
+                        setErrors({ submit: 'Usuario o contraseña incorrectos' });
                     }
 
-                    setStatus({ success: true });
-                    setSubmitting(false);
+                    if (scriptedRef.current) {
+                        setStatus({ success: true });
+                        setSubmitting(false);
+                    }
                 } catch (err) {
-                    console.error('Error al hacer login:', err);
-                    setStatus({ success: false });
-                    setErrors({ submit: err.message });
-                    setSubmitting(false);
-                } finally {
-                    setLoading(false);  // Detener la carga
+                    console.error('Error en el login:', err);
+                    if (scriptedRef.current) {
+                        setStatus({ success: false });
+                        setErrors({ submit: err.message });
+                        setSubmitting(false);
+                    }
                 }
             }}
         >
@@ -156,7 +141,7 @@ const JWTLogin = ({ loginProp, ...others }) => {
                                     </IconButton>
                                 </InputAdornment>
                             }
-                            label="Contraseña"
+                            label="Password"
                         />
                         {touched.password && errors.password && (
                             <FormHelperText error id="standard-weight-helper-text-password-login">
@@ -172,30 +157,38 @@ const JWTLogin = ({ loginProp, ...others }) => {
                                     <Checkbox
                                         checked={checked}
                                         onChange={(event) => setChecked(event.target.checked)}
-                                        name="remember"
+                                        name="checked"
+                                        color="primary"
                                     />
                                 }
-                                label="Recordar sesión"
+                                label="Mantenerme Logueado"
                             />
                         </Grid>
-
                         <Grid item>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                type="submit"
-                                disabled={isSubmitting || loading}  // Desactivar el botón mientras está cargando
+                            <Typography
+                                variant="subtitle1"
+                                component={Link}
+                                to='/pages/forgot-password/forgot-password3'
+                                color="secondary"
+                                sx={{ textDecoration: 'none' }}
                             >
-                                {loading ? <CircularProgress size={24} color="primary" /> : 'Iniciar sesión'}
-                            </Button>
+                                ¿Olvidaste tu contraseña?
+                            </Typography>
                         </Grid>
                     </Grid>
 
                     {errors.submit && (
-                        <Box mt={2} textAlign="center" color="error.main">
-                            <Typography variant="h6">{errors.submit}</Typography>
+                        <Box sx={{ mt: 3 }}>
+                            <FormHelperText error>{errors.submit}</FormHelperText>
                         </Box>
                     )}
+                    <Box sx={{ mt: 2 }}>
+                        <AnimateButton>
+                            <Button color="secondary" disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained">
+                                Iniciar Sesión
+                            </Button>
+                        </AnimateButton>
+                    </Box>
                 </form>
             )}
         </Formik>
@@ -203,7 +196,7 @@ const JWTLogin = ({ loginProp, ...others }) => {
 };
 
 JWTLogin.propTypes = {
-    loginProp: PropTypes.func
+    loginProp: PropTypes.number
 };
 
 export default JWTLogin;
