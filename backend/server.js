@@ -59,39 +59,32 @@ app.get("/api/mercadopago/callback", async (req, res) => {
   }
 
   try {
-    // Decodificar el token `state` para validar su formato
-    console.log("Validando formato del token `state`...");
-    const decodedStatePrelim = jwt.decode(state);
-    if (!decodedStatePrelim) {
-      console.error("El token `state` no es un JWT válido.");
-      return res.status(400).json({ error: "Token `state` inválido" });
-    }
-
-    // Decodificar el token `state` con verificación
-    console.log("Decodificando el token `state`...");
+    console.log("Decodificando y verificando el token `state`...");
     const decodedState = jwt.verify(state, TOKEN_SECRET);
-
-    if (!decodedState.userId) {
+    console.log(decodedState)
+    const { userId } = decodedState; 
+    if (!userId) {
       console.error("El token `state` no contiene un `userId` válido:", decodedState);
-      return res.status(400).json({ error: "El token `state` no es válido o no contiene un `userId`" });
+      return res.status(400).json({ error: "El token `state` no contiene un `userId` válido." });
     }
 
-    const userId = decodedState.userId;
     console.log("Token `state` validado. Usuario ID:", userId);
 
-    // Convertir el userId a ObjectId
     const objectId = mongoose.Types.ObjectId(userId);
-
-    // Buscar al usuario en la base de datos
     console.log("Buscando usuario en la base de datos con ID:", objectId);
-    const user = await User.findById(objectId);
 
+    const user = await User.findById(objectId);
     if (!user) {
-      console.error("Usuario no encontrado en la base de datos con ID:", userId);
+      console.error("Usuario no encontrado en la base de datos:", userId);
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
     console.log("Usuario encontrado:", user.email);
+
+
+ 
+
+
 
     // Solicitar el token de Mercado Pago
     console.log("Solicitando token de Mercado Pago...");
