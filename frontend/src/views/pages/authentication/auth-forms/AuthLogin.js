@@ -63,7 +63,7 @@ const JWTLogin = ({ loginProp, ...others }) => {
 
                     if (response.ok) {
                         // Extraer el token desde las cookies
-                        const token = cookies.get('token');
+                        const token = Cookies.get('token');
                         console.log('Token obtenido de las cookies:', token);
 
                         if (token) {
