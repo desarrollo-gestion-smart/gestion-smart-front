@@ -5,7 +5,6 @@ const connectDB = require ('./src/db')
 const authRoutes = require('./src/routes/authentication/auth.routes')
 const app = express();
 const morgan = require ('morgan')
-const cookieParser = require ('cookie-parser')
 
 app.use(
   cors({
@@ -26,7 +25,6 @@ app.use(
 
 app.use(morgan('dev'));
 app.use(express.json());
-app.use(cookieParser());
 
 // base de datos
 //autenticaciones

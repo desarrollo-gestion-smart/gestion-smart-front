@@ -1,4 +1,4 @@
-const TOKEN_SECRET= "some secret key"
+const TOKEN_SECRET= "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyMzQ1IiwiaWF0IjoxNjkxOTk0Mjk3LCJleHAiOjE2OTIwODA2OTd9._SUfQ5EyQ_k9I1M2Z2hwlWJ_3L0m7eg"
 
 
 module.exports = TOKEN_SECRET

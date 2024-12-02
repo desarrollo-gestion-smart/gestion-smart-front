@@ -54,32 +54,37 @@ const JWTLogin = ({ loginProp, ...others }) => {
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(values),
                     });
-            
+                      console.log(response)
                     if (response.ok) {
-                        const token = response.headers.get('Authorization')?.replace('Bearer ', ''); // Extraer el token del encabezado
-                        const data = await response.json(); // Obtener los datos del usuario
-            
+                        const data = await response.json(); // Procesar la respuesta JSON
+                        console.log('Respuesta del backend:', data);
+
+                        const { token, user } = data;
+
                         if (token) {
                             // Guardar el token en localStorage
                             localStorage.setItem('token', token);
                             console.log('Token guardado en localStorage:', token);
-            
-                            // Guardar otros datos del usuario si es necesario
-                            if (data.user && data.user.id) {
-                                localStorage.setItem('userId', data.user.id);
-                                console.log('UserId guardado en localStorage:', data.user.id);
+
+                            // Guardar información del usuario en localStorage si es necesario
+                            if (user) {
+                                localStorage.setItem('userId', user.id);
+                                localStorage.setItem('userEmail', user.email);
+                                console.log('Información del usuario guardada:', user);
+                                console.log(localStorage.getItem('token'));
+
                             }
-            
+
                             // Redirigir al dashboard
                             navigate('/dashboard/default');
                         } else {
-                            console.error('No se encontró el token en los encabezados.');
+                            console.error('No se recibió el token en la respuesta.');
                             setErrors({ submit: 'No se pudo iniciar sesión. Inténtalo de nuevo.' });
                         }
                     } else {
                         setErrors({ submit: 'Usuario o contraseña incorrectos' });
                     }
-            
+
                     setStatus({ success: true });
                     setSubmitting(false);
                 } catch (err) {
