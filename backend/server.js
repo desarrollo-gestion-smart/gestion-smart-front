@@ -18,7 +18,7 @@ app.use(
       "http://localhost:3000",  // El frontend local
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],  
-    allowedHeaders: ["Content-Type"], 
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,  
   })
 );
