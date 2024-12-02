@@ -44,56 +44,41 @@ const register = async (req,res) =>{
         
        }
 };
-const login = async (req,res ) =>{
-
-   const{
-       
-         email,
-         password
-        } = req.body
-
-       try {
-        const userFound = await User.findOne({email})
-       if(!userFound){
-        return res.status(400).json({message: "Usuario no encontrado"})
-       }
-       
-       const isMatch = await bcrypt.compare(password, userFound.password)
-       if (!isMatch){
-        return res.status(400).json({message: "credenciales incorrectas"})
-       }
-       
-        
-       
-    
-    
-     const token = await createAccesToken ({ id: userFound._id})
-    
-     console.log('Token generado:', token);
-
-     res.cookie('token', token, {
-        
-        httpOnly: false, // Ya está correcto para este caso
-        secure: false, // Mantenlo si usas HTTPS
-        sameSite: 'None', // Cambia a Lax o None si estás trabajando en dominios diferentes
-      
-     })
-    res.json({
-
-        id: userFound._id,
-        firstname: userFound.firstname,
-        lastname: userFound.lastname,
-        email: userFound.email,
-        createAt:userFound.createdAt
-    })
-
+const login = async (req, res) => {
+    const { email, password } = req.body;
+  
+    try {
+      const userFound = await User.findOne({ email });
+  
+      if (!userFound) {
+        return res.status(400).json({ message: "Usuario no encontrado" });
+      }
+  
+      const isMatch = await bcrypt.compare(password, userFound.password);
+  
+      if (!isMatch) {
+        return res.status(400).json({ message: "Credenciales incorrectas" });
+      }
+  
+      const token = createAccesToken({ id: userFound._id });
+  
+      console.log('Token generado:', token);
+  
+      res.json({
+        token, // Enviamos el token en la respuesta
+        user: {
+          id: userFound._id,
+          firstname: userFound.firstname,
+          lastname: userFound.lastname,
+          email: userFound.email,
+          createdAt: userFound.createdAt,
+        },
+      });
     } catch (error) {
-        res.status(500).json({message: error.message})
-        
-       }
-
-
-};
+      console.error(error);
+      res.status(500).json({ message: "Error en el servidor" });
+    }
+  };
 
 const logout = async(req,res) =>{
     res.cookie('token', "", {

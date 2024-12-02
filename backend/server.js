@@ -19,14 +19,14 @@ app.use(
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],  
     allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,  
+    credentials: true 
   })
 );
 
 
 app.use(morgan('dev'));
 app.use(express.json());
-app.use(cookieParser())
+app.use(cookieParser());
 
 // base de datos
 //autenticaciones

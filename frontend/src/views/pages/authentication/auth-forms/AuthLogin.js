@@ -21,8 +21,6 @@ import { Formik } from 'formik';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import Cookies from 'js-cookie';
-console.log(Cookies.get('token')); // Debería imprimir el valor del token
 
 const JWTLogin = ({ loginProp, ...others }) => {
     const theme = useTheme();
@@ -53,39 +51,29 @@ const JWTLogin = ({ loginProp, ...others }) => {
                 try {
                     const response = await fetch('https://vigilant-prosperity-production.up.railway.app/api/login', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(values),
-                        credentials: 'include' // Permite que las cookies se envíen y reciban
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(values)
                     });
-                    console.log('Respuesta recibida:', response);
 
                     if (response.ok) {
-                        // Extraer el token desde las cookies
-                        const token = Cookies.get('token');
-                        console.log('Token obtenido de las cookies:', token);
+                        const data = await response.json(); // Obtener el token y datos del usuario
+                        const { token, user } = data;
 
                         if (token) {
                             // Guardar el token en localStorage
                             localStorage.setItem('token', token);
                             console.log('Token guardado en localStorage:', token);
-                        } else {
-                            console.error('No se encontró el token en las cookies');
-                        }
 
-                        // Obtener los datos del usuario
-                        const user = await response.json();
-                        if (user?.id) {
-                            // Guardar el userId en localStorage
+                            // Guardar información adicional del usuario si es necesario
                             localStorage.setItem('userId', user.id);
                             console.log('UserId guardado en localStorage:', user.id);
-                        } else {
-                            console.error('No se encontró el id del usuario en la respuesta');
-                        }
 
-                        // Redirigir al dashboard
-                        navigate('/dashboard/default');
+                            // Redirigir al dashboard
+                            navigate('/dashboard/default');
+                        } else {
+                            console.error('No se recibió el token en la respuesta.');
+                            setErrors({ submit: 'No se pudo iniciar sesión. Inténtalo de nuevo.' });
+                        }
                     } else {
                         setErrors({ submit: 'Usuario o contraseña incorrectos' });
                     }
