@@ -61,8 +61,8 @@ app.get("/api/mercadopago/callback", async (req, res) => {
   try {
     console.log("Decodificando y verificando el token `state`...");
     const decodedState = jwt.verify(state, TOKEN_SECRET);
-    console.log(decodedState)
-    const { userId } = decodedState; 
+    console.log(decodedState.id)
+    const { userId } = decodedState.id; 
     if (!userId) {
       console.error("El token `state` no contiene un `userId` válido:", decodedState);
       return res.status(400).json({ error: "El token `state` no contiene un `userId` válido." });
