@@ -59,7 +59,15 @@ app.get("/api/mercadopago/callback", async (req, res) => {
   }
 
   try {
-    // Decodificar el token `state`
+    // Decodificar el token `state` para validar su formato
+    console.log("Validando formato del token `state`...");
+    const decodedStatePrelim = jwt.decode(state);
+    if (!decodedStatePrelim) {
+      console.error("El token `state` no es un JWT válido.");
+      return res.status(400).json({ error: "Token `state` inválido" });
+    }
+
+    // Decodificar el token `state` con verificación
     console.log("Decodificando el token `state`...");
     const decodedState = jwt.verify(state, TOKEN_SECRET);
 
@@ -124,13 +132,17 @@ app.get("/api/mercadopago/callback", async (req, res) => {
     res.status(200).json({ redirectUrl: "https://gestion-smart-testing.com/apps/wallet/vinculate?success=true" });
   } catch (error) {
     console.error("Error en el procesamiento del callback:", error.message);
+
+    if (error.name === "JsonWebTokenError") {
+      console.error("Error en el token JWT:", error.message);
+    }
+
     res.status(500).json({
       redirectUrl: "https://gestion-smart-testing.com/apps/wallet/vinculate?success=false",
       error: error.message,
     });
   }
 });
-
 
 app.get("/api/mercadopago/wallet-status", async (req, res) => {
   console.log("Solicitud a wallet-status recibida:", req.headers);
