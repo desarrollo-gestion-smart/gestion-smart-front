@@ -50,7 +50,7 @@ const JWTLogin = ({ loginProp, ...others }) => {
             })}
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                 try {
-                    const response = await fetch('http://vigilant-prosperity-production.up.railway.app/api/login', {
+                    const response = await fetch('https://vigilant-prosperity-production.up.railway.app/api/login', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
