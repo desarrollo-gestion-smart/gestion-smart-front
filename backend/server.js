@@ -148,7 +148,7 @@ app.get("/api/mercadopago/wallet-status", async (req, res) => {
     const token = authHeader.split(" ")[1];
     console.log("Token recibido:", token);
 
-    const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+    const decoded = jwt.verify(token, TOKEN_SECRET);
     console.log("Token decodificado:", decoded);
 
     const user = await User.findById(decoded.userId);
