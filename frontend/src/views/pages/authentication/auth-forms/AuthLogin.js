@@ -41,7 +41,11 @@ const JWTLogin = () => {
                         // Guardar el token en localStorage
                         if (token) {
                             localStorage.setItem('token', token);
+                            const userId = user.id
+                            localStorage.setItem('userId',userId); // Lo almacenas como string
+
                             console.log('Token guardado en localStorage:', token);
+                            console.log('UserId', userId);
 
                             // Redirigir al dashboard
                             navigate('/dashboard/default');

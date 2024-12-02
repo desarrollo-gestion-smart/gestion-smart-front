@@ -86,29 +86,17 @@ const PaymentCards = () => {
           "https://vigilant-prosperity-production.up.railway.app/api/mercadopago/wallet-status",
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Envía el token en la cabecera
+              Authorization: `Bearer ${token}`,
             },
           }
         );
-        console.log("Respuesta de la API:", response.data);
-
         if (response.status === 200 && response.data.walletStatus) {
           setWalletStatus(response.data.walletStatus);
         } else {
-          console.error(
-            "Estructura inesperada en la respuesta de la API:",
-            response.data
-          );
+          console.error("Estructura inesperada en la respuesta de la API:", response.data);
         }
       } catch (error) {
         console.error("Error al obtener el estado de la wallet:", error);
-        if (error.response) {
-          console.error("Respuesta del servidor:", error.response);
-        } else if (error.request) {
-          console.error("No se recibió respuesta del servidor:", error.request);
-        } else {
-          console.error("Error al configurar la solicitud:", error.message);
-        }
       } finally {
         setLoading(false);
       }
@@ -117,42 +105,53 @@ const PaymentCards = () => {
     checkWalletStatus();
   }, []);
 
-  // Conectar Mercado Pago
   const handleConnect = (url) => {
     if (url.includes("mercadopago")) {
       const clientId = "275793137258734";
-      const redirectUri =
-        "https://gestion-smart-testing.com/vinculate/mercadopago/callback";
+      const redirectUri = "https://gestion-smart-testing.com/vinculate/mercadopago/callback";
 
-      const token = localStorage.getItem("token"); // Lee el token desde localStorage
+      const token = localStorage.getItem("token");
       if (!token) {
         console.error("Token no disponible en localStorage.");
         alert("Por favor, inicia sesión nuevamente.");
         return;
       }
 
-      // Construir la URL con el estado (token)
-      const authorizationUrl = `https://auth.mercadopago.com/authorization?client_id=${clientId}&response_type=code&platform_id=mp&redirect_uri=${encodeURIComponent(
-        redirectUri
-      )}&state=${encodeURIComponent(token)}`;
+      // Decodificar el token JWT
+      try {
+        const decodedToken = JSON.parse(atob(token.split(".")[1])); // Decodifica el payload del JWT
+        const userId = decodedToken.id; // Extraer el `id` directamente
 
-      // Abrir la ventana emergente para vinculación
-      const popup = window.open(authorizationUrl, "_blank");
-
-      if (!popup) {
-        alert("Por favor, habilita las ventanas emergentes en tu navegador.");
-        return;
-      }
-
-      // Manejo del cierre de la ventana emergente
-      const pollTimer = setInterval(() => {
-        if (popup.closed) {
-          clearInterval(pollTimer);
-          window.location.reload();
+        if (!userId) {
+          throw new Error("El token no contiene un userId válido.");
         }
-      }, 500);
+
+        const state = btoa(JSON.stringify({ userId, token })); // Codificar el `state` con el `userId`
+
+        const authorizationUrl = `https://auth.mercadopago.com/authorization?client_id=${clientId}&response_type=code&platform_id=mp&redirect_uri=${encodeURIComponent(
+          redirectUri
+        )}&state=${encodeURIComponent(state)}`;
+
+        const popup = window.open(authorizationUrl, "_blank");
+        if (!popup) {
+          alert("Por favor, habilita las ventanas emergentes en tu navegador.");
+          return;
+        }
+
+        const pollTimer = setInterval(() => {
+          if (popup.closed) {
+            clearInterval(pollTimer);
+            window.location.reload();
+          }
+        }, 500);
+      } catch (error) {
+        console.error("Error al decodificar el token:", error);
+        alert("Error al procesar la vinculación. Por favor, inténtelo de nuevo.");
+      }
     }
   };
+
+
 
   if (loading) {
     return (

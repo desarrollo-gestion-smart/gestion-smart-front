@@ -9,53 +9,43 @@ const MercadoPagoCallback = () => {
       const query = new URLSearchParams(window.location.search);
       const code = query.get("code");
       const state = query.get("state");
-
-      console.log("MercadoPagoCallback mounted.");
-      console.log("Code:", code);
-      console.log("State:", state);
-
+  
       if (code && state) {
         try {
-          const token = localStorage.getItem("token"); // Obtener el token JWT del localStorage
-
-          if (!token) {
-            console.error("Token no encontrado en localStorage.");
-            // window.location.href = "/mercadopago/error"; // Redirigir a la página de error
-            return;
+          const decodedState = JSON.parse(atob(state));
+          const { userId, token } = decodedState;
+  
+          if (!userId || !token) {
+            throw new Error("El token `state` no contiene `userId` o `token` válido.");
           }
-
-          // Enviar una solicitud GET al backend con los parámetros en la URL y el encabezado de autenticación
+  
+          // Guardar userId en localStorage
+          localStorage.getItem('userId', userId);
+          console.log("User ID guardado en localStorage:", userId);
+  
           const response = await axios.get(
             `https://vigilant-prosperity-production.up.railway.app/api/mercadopago/callback?code=${code}&state=${state}`,
             {
               headers: {
-                Authorization: `Bearer ${token}`, // Agregar token JWT en el encabezado
+                Authorization: `Bearer ${token}`,
               },
             }
           );
-
-                    console.log("Respuesta del backend:", response.data);
-                   const { redirectUrl } = response.data;
-                   console.log("Redirect URL:", redirectUrl);
-
-          
-          // Redirigir al usuario en la misma pestaña
+  
+          const { redirectUrl } = response.data;
           if (redirectUrl) {
-            window.location.href = redirectUrl; // Redirigir al usuario a la URL proporcionada
+            window.location.href = redirectUrl;
           }
         } catch (error) {
-          console.error(
-            "Error al procesar el callback de MercadoPago:",
-            error.response?.data || error.message
-          );
-          // window.location.href = "/mercadopago/error"; // Redirigir a la página de error
+          console.error("Error al procesar el callback:", error.message);
+          alert("Error al procesar la solicitud.");
         }
       } else {
-        console.log("Faltan parámetros 'code' o 'state' en la URL.");
-        // window.location.href = "/mercadopago/error"; // Redirigir a la página de error
+        console.error("Faltan parámetros 'code' o 'state' en la URL.");
+        alert("Faltan parámetros necesarios en la URL.");
       }
     };
-
+  
     processCallback();
   }, []);
 

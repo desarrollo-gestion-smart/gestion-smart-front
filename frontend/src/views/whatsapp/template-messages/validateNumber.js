@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, ThemeProvider, createTheme, CircularProgress } from '@mui/material';
+import {
+  TextField,
+  Button,
+  Box,
+  Typography,
+  ThemeProvider,
+  createTheme,
+  CircularProgress,
+} from '@mui/material';
 
 // Custom theme
 const theme = createTheme({
@@ -23,94 +31,90 @@ const WhatsAppVerifier = () => {
   const [error, setError] = useState(false);
   const [pairingCode, setPairingCode] = useState('');
   const [invitation, setInvitation] = useState('');
-  const [loading, setLoading] = useState(false); // Estado de carga
-  const [checkingNumber, setCheckingNumber] = useState(false); // Estado de verificación del número
+  const [loading, setLoading] = useState(false);
+  const [checkingNumber, setCheckingNumber] = useState(false);
+
   const handleSubmit = async () => {
     if (phoneNumber) {
-      const userId = localStorage.getItem('userId');
-  
-      // Verificar que tengamos el userId
-      if (!userId) {
+      // Extraer ID de usuario desde localStorage
+      const user = localStorage.getItem('userId');
+      if (!user) {
+        console.error('[ERROR] No se encontró el ID del usuario en localStorage.');
         setError(true);
-        setMessage('No se ha encontrado el ID de usuario en el almacenamiento.');
+        setMessage('No se ha encontrado información del usuario en el almacenamiento.');
         return;
       }
-  
-      setCheckingNumber(true); // Empieza la verificación del número
-      const number = phoneNumber; // Se envía sin el '+'
-  
-      // Logs antes de enviar la solicitud
-      console.log('[DEBUG] userId:', userId);  // Mostrar userId
-      console.log('[DEBUG] Verificando número:', number);  // Mostrar número
-      console.log('[DEBUG] Enviando solicitud de verificación con los siguientes datos:');
-      console.log('[DEBUG] Datos:', { number, userId }); // Log de los datos que se están enviando en la solicitud
-  
+
+      let id;
       try {
-        // Verificar si el número ya está vinculado
-        const checkNumberResponse = await fetch('https://backend-api-whatsapp-production.up.railway.app/api/v1/check-number', {
+        id = JSON.parse(user); // Intenta parsear el JSON
+      } catch (e) {
+        id = user; // Si no es un JSON, usa el valor tal como está
+      }
+
+      console.log('[DEBUG] ID extraído del localStorage:', id);
+
+      if (!id) {
+        console.error('[ERROR] ID del usuario no está disponible.');
+        setError(true);
+        setMessage('El ID del usuario no está disponible.');
+        return;
+      }
+
+      console.log('User ID extraído:', id);
+
+      setCheckingNumber(true);
+
+      try {
+        // Construir el payload para la solicitud
+        const payload = { number: phoneNumber, id };
+        console.log('[DEBUG] Payload que se enviará a la API:', payload);
+
+        // Endpoint al que se enviará la solicitud
+        const endpoint = 'https://backend-api-whatsapp-production.up.railway.app/api/v1/instances/create';
+        console.log('[INFO] Endpoint de la API:', endpoint);
+
+        // Llamada a la API
+        const verifyResponse = await fetch(endpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ number, userId }), // Solo enviamos userId y number
+          body: JSON.stringify(payload),
         });
-  
-        console.log('[DEBUG] Respuesta de verificación del número:', checkNumberResponse.status); // Log de la respuesta del servidor
-        const checkNumberData = await checkNumberResponse.json();
-        console.log('[DEBUG] Respuesta de la verificación del número:', checkNumberData); // Log de los datos de la respuesta
-  
-        // Verificar si la respuesta fue exitosa
-        if (checkNumberResponse.ok) {
-          if (checkNumberData.isLinked) {
-            setError(true);
-            setMessage('Este número ya está vinculado a una cuenta.');
-            setCheckingNumber(false);
-            return;
-          }
-  
-          // Si el número no está vinculado, enviamos el código
-          setLoading(true); // Activar la carga
-          console.log('[DEBUG] Enviando solicitud de verificación con los siguientes datos:', { id: userId, number }); // Log de los datos enviados
-  
-          const verifyResponse = await fetch('https://backend-api-whatsapp-production.up.railway.app/api/v1/instances/create', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ id: userId, number }), // Solo enviamos userId y number
-          });
-  
-          console.log('[DEBUG] Respuesta de la solicitud de verificación:', verifyResponse.status); // Log de la respuesta
-          const verifyData = await verifyResponse.json();
-          console.log('[DEBUG] Datos recibidos de la verificación:', verifyData); // Log de los datos de la respuesta
-  
-          if (verifyResponse.ok && verifyData) {
-            setSuccess(true);
-            setMessage(`El código ha sido enviado a ${number}`);
-            setPairingCode(verifyData.message.pairingCode || 'No pairing code');
-            setInvitation(verifyData.invitation || '');
-          } else {
-            setError(true);
-            setMessage(verifyData?.error || 'Hubo un error al enviar el código.');
-          }
+
+        // Respuesta de la API
+        const verifyData = await verifyResponse.json();
+        console.log('[DEBUG] Respuesta recibida de la API:', verifyData);
+
+        if (verifyResponse.ok && verifyData) {
+          const pairingCode =
+            verifyData.message?.pairingCode ||
+            verifyData.pairingCode ||
+            'Código no disponible';
+          setPairingCode(pairingCode);
+          setInvitation(verifyData.invitation || '');
+          setSuccess(true);
+          setMessage(`El código ha sido enviado a ${phoneNumber}`);
         } else {
+          console.error('[ERROR] La API respondió con un error:', verifyData);
           setError(true);
-          setMessage('Hubo un error con la verificación del número.');
+          setMessage(verifyData?.error || 'Hubo un error al enviar el código.');
         }
       } catch (error) {
+        console.error('[ERROR] Error de conexión con la API:', error);
         setError(true);
         setMessage('Hubo un error con la conexión al servidor.');
-        console.error(error);
       } finally {
-        setLoading(false); // Desactivar la carga
-        setCheckingNumber(false); // Finaliza la verificación del número
+        setLoading(false);
+        setCheckingNumber(false);
       }
     } else {
+      console.error('[ERROR] Número de WhatsApp no válido.');
       setError(true);
       setMessage('Por favor, ingresa un número de WhatsApp válido.');
     }
   };
-  
 
   return (
     <ThemeProvider theme={theme}>
@@ -173,7 +177,9 @@ const WhatsAppVerifier = () => {
               placeholder="ej: 5491123654789"
               variant="standard"
               value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value.replace(/[^0-9]/g, ''))} // Solo números
+              onChange={(e) =>
+                setPhoneNumber(e.target.value.replace(/[^0-9]/g, ''))
+              }
               fullWidth
               InputProps={{
                 disableUnderline: true,
@@ -200,12 +206,26 @@ const WhatsAppVerifier = () => {
               borderRadius: '5px',
               position: 'relative',
             }}
-            disabled={loading || checkingNumber} // Deshabilitar el botón mientras está cargando o verificando
+            disabled={loading || checkingNumber}
           >
             {loading || checkingNumber ? (
               <>
-                <CircularProgress size={24} sx={{ position: 'absolute', left: '50%', top: '50%', marginLeft: '-12px', marginTop: '-12px' }} />
-                <Typography variant="button" sx={{ marginLeft: '35px' }}>Esperando respuesta...</Typography>
+                <CircularProgress
+                  size={24}
+                  sx={{
+                    position: 'absolute',
+                    left: '50%',
+                    top: '50%',
+                    marginLeft: '-12px',
+                    marginTop: '-12px',
+                  }}
+                />
+                <Typography
+                  variant="button"
+                  sx={{ marginLeft: '35px' }}
+                >
+                  Esperando respuesta...
+                </Typography>
               </>
             ) : (
               'Enviar Código'
@@ -236,7 +256,9 @@ const WhatsAppVerifier = () => {
                 fontSize: '16px',
               }}
             >
-              <Typography variant="h6">Ingrese este código en su WhatsApp: {pairingCode}</Typography>
+              <Typography variant="h6">
+                Ingrese este código en su WhatsApp: {pairingCode}
+              </Typography>
             </Box>
           )}
           {invitation && (
@@ -251,7 +273,12 @@ const WhatsAppVerifier = () => {
               }}
             >
               <Typography variant="h6">
-                <a href={invitation} target="_blank" rel="noopener noreferrer" style={{ color: '#000', textDecoration: 'none' }}>
+                <a
+                  href={invitation}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: '#000', textDecoration: 'none' }}
+                >
                   Haga clic aquí para unirse a la invitación.
                 </a>
               </Typography>
