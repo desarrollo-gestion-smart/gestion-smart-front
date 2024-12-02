@@ -1,6 +1,7 @@
 const User = require ('../../models/users')
 const bcrypt = require('bcrypt')
 const TOKEN_SECRET = require('../../config'); // Asegúrate de que este archivo exporta una clave válida
+const jwt = require('jsonwebtoken');
 
 function createAccessToken(userId) {
     return jwt.sign({ id: userId }, TOKEN_SECRET, { expiresIn: '1d' });
