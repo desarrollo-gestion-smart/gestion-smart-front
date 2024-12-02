@@ -7,7 +7,7 @@ const app = express();
 const morgan = require ('morgan')
 const TOKEN_SECRET = require('./src/config');
 const axios = require("axios");
-
+const User = require('./src/models/users')
 app.use(
   cors({
     origin: [
