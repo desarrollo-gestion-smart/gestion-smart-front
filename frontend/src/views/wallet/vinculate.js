@@ -108,29 +108,45 @@ const PaymentCards = () => {
   }, []);
 
   // Lógica para conectar Mercado Pago
-  const handleConnect = (url) => {
-    if (url.includes("mercadopago")) {
-      const clientId = "275793137258734";
-      const redirectUri =
-        "https://gestion-smart-testing.com/vinculate/mercadopago/callback";
-
+  const handleConnect = async () => {
+    const clientId = "275793137258734";
+    const redirectUri =
+      "https://gestion-smart-testing.com/vinculate/mercadopago/callback";
+  
+    try {
+      // Solicita el `state` al backend
+      const { data } = await axios.get(
+        "https://vigilant-prosperity-production.up.railway.app/api/generate-mercadopago-state",
+        {
+          withCredentials: true, // Para enviar cookies automáticamente
+        }
+      );
+  
+      const { state } = data;
+  
+      // Construye la URL de autorización con el `state`
       const authorizationUrl = `https://auth.mercadopago.com/authorization?client_id=${clientId}&response_type=code&platform_id=mp&redirect_uri=${encodeURIComponent(
         redirectUri
-      )}`;
-
+      )}&state=${encodeURIComponent(state)}`;
+  
+      // Abre la ventana emergente
       const popup = window.open(authorizationUrl, "_blank");
-
+  
       if (!popup) {
         alert("Por favor, habilita las ventanas emergentes en tu navegador.");
         return;
       }
-
+  
+      // Manejo de cierre de la ventana emergente
       const pollTimer = setInterval(() => {
         if (popup.closed) {
           clearInterval(pollTimer);
           window.location.reload();
         }
       }, 500);
+    } catch (error) {
+      console.error("Error al generar el state para Mercado Pago:", error);
+      alert("No se pudo iniciar la conexión con Mercado Pago. Inténtalo más tarde.");
     }
   };
 
