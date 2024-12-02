@@ -68,7 +68,11 @@ const login = async (req,res ) =>{
     
     
      const token = await createAccesToken ({ id: userFound._id})
+    
+     console.log('Token generado:', token);
+
      res.cookie('token', token, {
+        
         httpOnly: false, // Ya está correcto para este caso
         secure: true, // Mantenlo si usas HTTPS
         sameSite: 'None', // Cambia a Lax o None si estás trabajando en dominios diferentes
