@@ -10,7 +10,7 @@ const Redirect = () => {
 
     if (code) {
       // Si encontramos el 'code', lo enviamos al backend para obtener el 'access_token'
-      axios.post('https://gestion-smart.com/api/mercadopago/auth', { code })
+      axios.post('https://gestion-smart-testing.com/api/mercadopago/auth', { code })
         .then(response => {
           // Aquí manejas el 'access_token' recibido desde el backend
           console.log('Token de acceso:', response.data.access_token);

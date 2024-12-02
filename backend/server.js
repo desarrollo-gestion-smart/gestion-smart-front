@@ -120,13 +120,13 @@ app.get("/api/mercadopago/callback", async (req, res) => {
     console.log("Billetera vinculada exitosamente para el usuario:", userId);
 
     res.status(200).json({
-      redirectUrl: "https://gestion-smart.com/apps/wallet/vinculate?success=true",
+      redirectUrl: "https://gestion-smart-testing.com/apps/wallet/vinculate?success=true",
     });
   } catch (error) {
     console.error("Error en el procesamiento del callback:", error.message);
 
     res.status(500).json({
-      redirectUrl: "https://gestion-smart.com/apps/wallet/vinculate?success=false",
+      redirectUrl: "https://gestion-smart-testing.com/apps/wallet/vinculate?success=false",
       error: error.response?.data || error.message,
     });
   }

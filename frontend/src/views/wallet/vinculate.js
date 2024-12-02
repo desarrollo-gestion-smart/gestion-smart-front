@@ -71,14 +71,23 @@ const PaymentCards = () => {
   const [walletStatus, setWalletStatus] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Verificar el estado de la billetera
   useEffect(() => {
     const checkWalletStatus = async () => {
+      const token = localStorage.getItem("token"); // Lee el token desde localStorage
+      if (!token) {
+        console.error("Token no disponible en localStorage.");
+        alert("Por favor, inicia sesión nuevamente.");
+        setLoading(false);
+        return;
+      }
+
       try {
         const response = await axios.get(
           "https://vigilant-prosperity-production.up.railway.app/api/mercadopago/wallet-status",
           {
-            withCredentials: true, // Permitir cookies en la solicitud
+            headers: {
+              Authorization: `Bearer ${token}`, // Envía el token en la cabecera
+            },
           }
         );
         console.log("Respuesta de la API:", response.data);
@@ -115,12 +124,9 @@ const PaymentCards = () => {
       const redirectUri =
         "https://gestion-smart-testing.com/vinculate/mercadopago/callback";
 
-      // Lee el token desde las cookies
-      const token = cookies.get("token");
-      console.log("Token obtenido desde las cookies:", token);
-
+      const token = localStorage.getItem("token"); // Lee el token desde localStorage
       if (!token) {
-        console.error("Token no disponible en las cookies.");
+        console.error("Token no disponible en localStorage.");
         alert("Por favor, inicia sesión nuevamente.");
         return;
       }
