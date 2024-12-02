@@ -64,8 +64,11 @@ const login = async (req, res) => {
 
         console.log('Token generado:', token);
 
+        // Enviar el token en el encabezado
+        res.setHeader('Authorization', `Bearer ${token}`);
+
+        // Enviar información del usuario en el cuerpo (sin token)
         res.json({
-            token, // Enviamos el token en la respuesta
             user: {
                 id: userFound._id,
                 firstname: userFound.firstname,

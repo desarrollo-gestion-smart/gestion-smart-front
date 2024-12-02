@@ -52,32 +52,34 @@ const JWTLogin = ({ loginProp, ...others }) => {
                     const response = await fetch('https://vigilant-prosperity-production.up.railway.app/api/login', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(values)
+                        body: JSON.stringify(values),
                     });
-
+            
                     if (response.ok) {
-                        const data = await response.json(); // Obtener el token y datos del usuario
-                        const { token, user } = data;
-
+                        const token = response.headers.get('Authorization')?.replace('Bearer ', ''); // Extraer el token del encabezado
+                        const data = await response.json(); // Obtener los datos del usuario
+            
                         if (token) {
                             // Guardar el token en localStorage
                             localStorage.setItem('token', token);
                             console.log('Token guardado en localStorage:', token);
-
-                            // Guardar información adicional del usuario si es necesario
-                            localStorage.setItem('userId', user.id);
-                            console.log('UserId guardado en localStorage:', user.id);
-
+            
+                            // Guardar otros datos del usuario si es necesario
+                            if (data.user && data.user.id) {
+                                localStorage.setItem('userId', data.user.id);
+                                console.log('UserId guardado en localStorage:', data.user.id);
+                            }
+            
                             // Redirigir al dashboard
                             navigate('/dashboard/default');
                         } else {
-                            console.error('No se recibió el token en la respuesta.');
+                            console.error('No se encontró el token en los encabezados.');
                             setErrors({ submit: 'No se pudo iniciar sesión. Inténtalo de nuevo.' });
                         }
                     } else {
                         setErrors({ submit: 'Usuario o contraseña incorrectos' });
                     }
-
+            
                     setStatus({ success: true });
                     setSubmitting(false);
                 } catch (err) {
