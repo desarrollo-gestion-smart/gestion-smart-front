@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const mongoose = require("mongoose");
+
 // const mercadoPagoRoutes = require('./src/routes/wallets/mercadoPago/mercadoPagoRoutes')
 const connectDB = require ('./src/db')
 const authRoutes = require('./src/routes/authentication/auth.routes')
@@ -57,54 +59,53 @@ app.get("/api/mercadopago/callback", async (req, res) => {
   }
 
   try {
-    // Verificar y decodificar el token `state`
+    // Decodificar el token `state`
     console.log("Decodificando el token `state`...");
     const decodedState = jwt.verify(state, TOKEN_SECRET);
+
+    if (!decodedState.userId) {
+      console.error("El token `state` no contiene un `userId` válido:", decodedState);
+      return res.status(400).json({ error: "El token `state` no es válido o no contiene un `userId`" });
+    }
+
     const userId = decodedState.userId;
     console.log("Token `state` validado. Usuario ID:", userId);
 
-    // Solicitar el token de Mercado Pago
-    console.log("Solicitando token de Mercado Pago...");
-    console.log("Parámetros enviados a Mercado Pago:");
-    console.log({
-      grant_type: "authorization_code",
-      client_id: process.env.MP_CLIENT_ID,
-      client_secret: process.env.MP_CLIENT_SECRET,
-      redirect_uri: process.env.MP_REDIRECT_URI,
-      code,
-    });
-    const response = await axios.post(
-      "https://api.mercadopago.com/oauth/token",
-      new URLSearchParams({
-        grant_type: "authorization_code",
-        client_id: "275793137258734",
-        client_secret: "xzoghtz7AINHIGA1ZOzyDBEaJYW8iXjV",
-        redirect_uri: "https://gestion-smart-testing.com/vinculate/mercadopago/callback",
-        code,
-      }),
-      {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      }
-    );
+    // Convertir el userId a ObjectId
+    const objectId = mongoose.Types.ObjectId(userId);
 
-    const { access_token, refresh_token, user_id, expires_in } = response.data;
+    // Buscar al usuario en la base de datos
+    console.log("Buscando usuario en la base de datos con ID:", objectId);
+    const user = await User.findById(objectId);
 
-    console.log("Tokens obtenidos de Mercado Pago:", response.data);
-
-    // Verificar el usuario en la base de datos
-    console.log("Verificando usuario en la base de datos...");
-    const user = await User.findById(userId);
     if (!user) {
-      console.error("Usuario no encontrado en la base de datos.");
+      console.error("Usuario no encontrado en la base de datos con ID:", userId);
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
     console.log("Usuario encontrado:", user.email);
 
-    // Actualizar la billetera en la base de datos
+    // Solicitar el token de Mercado Pago
+    console.log("Solicitando token de Mercado Pago...");
+    const response = await axios.post(
+      "https://api.mercadopago.com/oauth/token",
+      new URLSearchParams({
+        grant_type: "authorization_code",
+        client_id: process.env.MP_CLIENT_ID,
+        client_secret: process.env.MP_CLIENT_SECRET,
+        redirect_uri: process.env.MP_REDIRECT_URI,
+        code,
+      }),
+      { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+    );
+
+    const { access_token, refresh_token, user_id, expires_in } = response.data;
+    console.log("Tokens obtenidos de Mercado Pago:", response.data);
+
+    // Actualizar la billetera del usuario
     console.log("Actualizando la billetera del usuario...");
     await User.findByIdAndUpdate(
-      userId,
+      objectId,
       {
         $set: {
           "wallet.mercadoPago": {
@@ -120,16 +121,12 @@ app.get("/api/mercadopago/callback", async (req, res) => {
     );
 
     console.log("Billetera vinculada exitosamente para el usuario:", userId);
-
-    res.status(200).json({
-      redirectUrl: "https://gestion-smart-testing.com/apps/wallet/vinculate?success=true",
-    });
+    res.status(200).json({ redirectUrl: "https://gestion-smart-testing.com/apps/wallet/vinculate?success=true" });
   } catch (error) {
     console.error("Error en el procesamiento del callback:", error.message);
-
     res.status(500).json({
       redirectUrl: "https://gestion-smart-testing.com/apps/wallet/vinculate?success=false",
-      error: error.response?.data || error.message,
+      error: error.message,
     });
   }
 });
