@@ -5,6 +5,7 @@ const connectDB = require ('./src/db')
 const authRoutes = require('./src/routes/authentication/auth.routes')
 const app = express();
 const morgan = require ('morgan')
+const TOKEN_SECRET = require('./src/config');
 
 app.use(
   cors({
@@ -57,7 +58,7 @@ app.get("/api/mercadopago/callback", async (req, res) => {
   try {
     // Verificar y decodificar el token `state`
     console.log("Decodificando el token `state`...");
-    const decodedState = jwt.verify(state, process.env.JWT_SECRET);
+    const decodedState = jwt.verify(state, process.env.TOKEN_SECRET);
     const userId = decodedState.userId;
     console.log("Token `state` validado. Usuario ID:", userId);
 

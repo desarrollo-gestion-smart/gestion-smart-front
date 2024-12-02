@@ -47,7 +47,7 @@ const WhatsAppVerifier = () => {
   
       try {
         // Verificar si el número ya está vinculado
-        const checkNumberResponse = await fetch('https://vigilant-prosperity-production.up.railway.app/api/v1/check-number', {
+        const checkNumberResponse = await fetch('https://backend-api-whatsapp-production.up.railway.app/api/v1/check-number', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ const WhatsAppVerifier = () => {
           setLoading(true); // Activar la carga
           console.log('[DEBUG] Enviando solicitud de verificación con los siguientes datos:', { id: userId, number }); // Log de los datos enviados
   
-          const verifyResponse = await fetch('https://vigilant-prosperity-production.up.railway.app/api/v1/instances/create', {
+          const verifyResponse = await fetch('https://backend-api-whatsapp-production.up.railway.app/api/v1/instances/create', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

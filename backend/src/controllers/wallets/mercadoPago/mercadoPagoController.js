@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
 const User = require("../../../models/users"); // Suponiendo un modelo User
+const TOKEN_SECRET = require('../../../config');
 
 const mercadopagoController = {
   callback: async (req, res) => {
@@ -11,7 +12,7 @@ const mercadopagoController = {
     }
 
     try {
-      const decodedState = jwt.verify(state, process.env.JWT_SECRET);
+      const decodedState = jwt.verify(state, process.env.TOKEN_SECRET);
       const userId = decodedState.userId;
 
       const response = await axios.post(
