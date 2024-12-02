@@ -46,39 +46,39 @@ const register = async (req,res) =>{
 };
 const login = async (req, res) => {
     const { email, password } = req.body;
-  
+
     try {
-      const userFound = await User.findOne({ email });
-  
-      if (!userFound) {
-        return res.status(400).json({ message: "Usuario no encontrado" });
-      }
-  
-      const isMatch = await bcrypt.compare(password, userFound.password);
-  
-      if (!isMatch) {
-        return res.status(400).json({ message: "Credenciales incorrectas" });
-      }
-  
-      const token = createAccesToken({ id: userFound._id });
-  
-      console.log('Token generado:', token);
-  
-      res.json({
-        token, // Enviamos el token en la respuesta
-        user: {
-          id: userFound._id,
-          firstname: userFound.firstname,
-          lastname: userFound.lastname,
-          email: userFound.email,
-          createdAt: userFound.createdAt,
-        },
-      });
+        const userFound = await User.findOne({ email });
+
+        if (!userFound) {
+            return res.status(400).json({ message: "Usuario no encontrado" });
+        }
+
+        const isMatch = await bcrypt.compare(password, userFound.password);
+
+        if (!isMatch) {
+            return res.status(400).json({ message: "Credenciales incorrectas" });
+        }
+
+        const token = createAccesToken({ id: userFound._id });
+
+        console.log('Token generado:', token);
+
+        res.json({
+            token, // Enviamos el token en la respuesta
+            user: {
+                id: userFound._id,
+                firstname: userFound.firstname,
+                lastname: userFound.lastname,
+                email: userFound.email,
+                createdAt: userFound.createdAt,
+            },
+        });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Error en el servidor" });
+        console.error('Error en el login:', error.message);
+        res.status(500).json({ message: "Error en el servidor" });
     }
-  };
+};
 
 const logout = async(req,res) =>{
     res.cookie('token', "", {
