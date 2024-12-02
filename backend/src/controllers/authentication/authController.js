@@ -61,13 +61,12 @@ const login = async (req, res) => {
         }
 
         // Generar el token JWT
-        const token = createAccesToken({ id: userFound._id });
-
-        console.log('Token generado:', token);
+        const token = await createAccessToken({ id: userFound._id });
+        console.log('Token generado en login:', token);
 
         // Devolver el token y los datos del usuario
         res.json({
-            token, // Enviamos el token en la respuesta
+            token, // Este debe ser el JWT generado
             user: {
                 id: userFound._id,
                 firstname: userFound.firstname,

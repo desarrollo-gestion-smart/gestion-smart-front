@@ -60,6 +60,7 @@ const JWTLogin = ({ loginProp, ...others }) => {
                         console.log('Respuesta del backend:', data);
 
                         const { token, user } = data;
+                        console.log('Token recibido en el frontend:', data.token);
 
                         if (token) {
                             // Guardar el token en localStorage
