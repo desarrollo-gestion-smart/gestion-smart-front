@@ -1,6 +1,12 @@
 const User = require ('../../models/users')
 const bcrypt = require('bcrypt')
-const createAccesToken = require ('../../libs/jwt')
+const TOKEN_SECRET = require('../../config'); // Asegúrate de que este archivo exporta una clave válida
+
+function createAccessToken(userId) {
+    return jwt.sign({ id: userId }, TOKEN_SECRET, { expiresIn: '1d' });
+}
+
+
 const register = async (req,res) =>{
     const{
         firstname,
@@ -48,25 +54,26 @@ const login = async (req, res) => {
     const { email, password } = req.body;
 
     try {
+        // Buscar al usuario en la base de datos
         const userFound = await User.findOne({ email });
-
         if (!userFound) {
-            return res.status(400).json({ message: "Usuario no encontrado" });
+            return res.status(400).json({ message: 'Usuario no encontrado' });
         }
 
+        // Verificar la contraseña
         const isMatch = await bcrypt.compare(password, userFound.password);
-
         if (!isMatch) {
-            return res.status(400).json({ message: "Credenciales incorrectas" });
+            return res.status(400).json({ message: 'Credenciales incorrectas' });
         }
 
         // Generar el token JWT
-        const token = await createAccessToken({ id: userFound._id });
-        console.log('Token generado en login:', token);
+        const token = createAccessToken(userFound._id);
 
-        // Devolver el token y los datos del usuario
+        console.log('Token generado:', token); // Esto debe mostrar una cadena JWT válida
+
+        // Enviar el token y los datos del usuario al cliente
         res.json({
-            token, // Este debe ser el JWT generado
+            token,
             user: {
                 id: userFound._id,
                 firstname: userFound.firstname,
@@ -77,7 +84,7 @@ const login = async (req, res) => {
         });
     } catch (error) {
         console.error('Error en el login:', error.message);
-        res.status(500).json({ message: "Error en el servidor" });
+        res.status(500).json({ message: 'Error en el servidor' });
     }
 };
 
