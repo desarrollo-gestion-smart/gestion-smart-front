@@ -39,7 +39,7 @@ const JWTRegister = ({ ...others }) => {
           password: values.password
         });
         try {
-          const response = await fetch('https://vigilant-prosperity-production.up.railway.app/api/users/register', {
+          const response = await fetch('http://localhost:5001/api/register', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

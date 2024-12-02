@@ -1,116 +1,40 @@
-import PropTypes from 'prop-types';
-import { createContext, useEffect, useReducer } from 'react';
+import React, { createContext, useState, useContext, useEffect } from "react";
 
-// third-party
-import { Auth0Client } from '@auth0/auth0-spa-js';
+const AuthContext = createContext();
 
-// project imports
-import Loader from 'ui-component/Loader';
+// Hook para usar el contexto
+export const useAuth = () => useContext(AuthContext);
 
-import { LOGIN, LOGOUT } from 'store/actions';
-import accountReducer from 'store/accountReducer';
+// Proveedor del contexto
+export const AuthProvider = ({ children }) => {
+    const [token, setToken] = useState(null);
 
-// constant
-let auth0Client;
-
-const initialState = {
-    isLoggedIn: false,
-    isInitialized: false,
-    user: null
-};
-
-// ==============================|| AUTH0 CONTEXT & PROVIDER ||============================== //
-
-const Auth0Context = createContext(null);
-
-export const Auth0Provider = ({ children }) => {
-    const [state, dispatch] = useReducer(accountReducer, initialState);
-
+    // Leer el token desde localStorage al montar el componente
     useEffect(() => {
-        const init = async () => {
-            try {
-                auth0Client = new Auth0Client({
-                    clientId: process.env.REACT_APP_AUTH0_CLIENT_ID,
-                    domain: process.env.REACT_APP_AUTH0_DOMAIN,
-                    authorizationParams: {
-                        redirect_uri: window.location.origin
-                    }
-                });
-
-                await auth0Client.checkSession();
-                const isLoggedIn = await auth0Client.isAuthenticated();
-
-                if (isLoggedIn) {
-                    const user = await auth0Client.getUser();
-
-                    dispatch({
-                        type: LOGIN,
-                        payload: {
-                            isLoggedIn: true,
-                            user: {
-                                id: user?.sub,
-                                email: user?.email
-                            }
-                        }
-                    });
-                } else {
-                    dispatch({
-                        type: LOGOUT
-                    });
-                }
-            } catch (err) {
-                dispatch({
-                    type: LOGOUT
-                });
-            }
-        };
-
-        init();
+        const storedToken = localStorage.getItem("token");
+        if (storedToken) {
+            setToken(storedToken);
+            console.log("Token cargado desde localStorage:", storedToken);
+        }
     }, []);
 
-    const login = async (options) => {
-        await auth0Client.loginWithPopup(options);
-        const isLoggedIn = await auth0Client.isAuthenticated();
-
-        if (isLoggedIn) {
-            const user = await auth0Client.getUser();
-            dispatch({
-                type: LOGIN,
-                payload: {
-                    isLoggedIn: true,
-                    user: {
-                        id: user?.sub,
-                        avatar: user?.picture,
-                        email: user?.email,
-                        name: user?.name,
-                        tier: 'Premium'
-                    }
-                }
-            });
-        }
+    // Función para guardar el token
+    const saveToken = (newToken) => {
+        setToken(newToken);
+        localStorage.setItem("token", newToken);
+        console.log("Token guardado globalmente:", newToken);
     };
 
-    const logout = () => {
-        auth0Client.logout();
-
-        dispatch({
-            type: LOGOUT
-        });
+    // Función para eliminar el token
+    const clearToken = () => {
+        setToken(null);
+        localStorage.removeItem("token");
+        console.log("Token eliminado");
     };
 
-    const resetPassword = async () => {};
-
-    const updateProfile = () => {};
-
-    if (state.isInitialized !== undefined && !state.isInitialized) {
-        return <Loader />;
-    }
-
-    return <Auth0Context.Provider value={{ ...state, login, logout, resetPassword, updateProfile }}>{children}</Auth0Context.Provider>;
+    return (
+        <AuthContext.Provider value={{ token, saveToken, clearToken }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
-
-Auth0Provider.propTypes = {
-    children: PropTypes.node
-};
-
-export default Auth0Context;

@@ -1,6 +1,6 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import {
     Box,
@@ -19,17 +19,16 @@ import {
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import AnimateButton from 'ui-component/extended/AnimateButton';
-import useScriptRef from 'hooks/useScriptRef';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import cookies from 'js-cookie';
 
 const JWTLogin = ({ loginProp, ...others }) => {
     const theme = useTheme();
-    const scriptedRef = useScriptRef();
     const navigate = useNavigate();
 
-    const [checked, setChecked] = React.useState(true);
-    const [showPassword, setShowPassword] = React.useState(false);
+    const [checked, setChecked] = useState(true);
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword);
@@ -51,52 +50,49 @@ const JWTLogin = ({ loginProp, ...others }) => {
             })}
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                 try {
-                    // Enviar credenciales al backend
-                    const response = await fetch('https://vigilant-prosperity-production.up.railway.app/api/users/login', {
+                    const response = await fetch('http://localhost:5001/api/login', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({
-                            email: values.email,
-                            password: values.password
-                        })
+                        body: JSON.stringify(values),
+                        credentials: 'include' // Permite que las cookies se envíen y reciban
                     });
-            
-                    const data = await response.json();
-                    console.log(data);  // Verifica que la respuesta contenga el token
-            
+
                     if (response.ok) {
-                        // Si el servidor no devuelve el token, lo harcodeamos
-                        const token = "7852369854778545875a8s5d86d8fff7w8qwe5";  // Token harcodeado para pruebas
-                        const userId = data.userId;
-            
-                        // Guardar el token y el userId en localStorage
-                        localStorage.setItem('token', token);
-                        localStorage.setItem('userId', userId); // Guardar userId en localStorage
-            
-                        console.log('Login exitoso');
-                        console.log('userId:', userId);  // Mostrar el userId en la consola
-                        console.log('Token:', token);  // Verificar si el token se guardó correctamente
-            
+                        // Extraer el token desde las cookies
+                        const token = cookies.get('token');
+                        if (token) {
+                            // Guardar el token en localStorage
+                            localStorage.setItem('token', token);
+                            console.log('Token guardado en localStorage:', token);
+                        } else {
+                            console.error('No se encontró el token en las cookies');
+                        }
+
+                        // Obtener los datos del usuario
+                        const user = await response.json();
+                        if (user?.id) {
+                            // Guardar el userId en localStorage
+                            localStorage.setItem('userId', user.id);
+                            console.log('UserId guardado en localStorage:', user.id);
+                        } else {
+                            console.error('No se encontró el id del usuario en la respuesta');
+                        }
+
                         // Redirigir al dashboard
-                        navigate('/dashboard/default');  // Redirigir al dashboard o a la página deseada
+                        navigate('/dashboard/default');
                     } else {
-                        console.log('Credenciales incorrectas');
                         setErrors({ submit: 'Usuario o contraseña incorrectos' });
                     }
-            
-                    if (scriptedRef.current) {
-                        setStatus({ success: true });
-                        setSubmitting(false);
-                    }
+
+                    setStatus({ success: true });
+                    setSubmitting(false);
                 } catch (err) {
                     console.error('Error en el login:', err);
-                    if (scriptedRef.current) {
-                        setStatus({ success: false });
-                        setErrors({ submit: err.message });
-                        setSubmitting(false);
-                    }
+                    setStatus({ success: false });
+                    setErrors({ submit: err.message });
+                    setSubmitting(false);
                 }
             }}
         >
@@ -178,8 +174,8 @@ const JWTLogin = ({ loginProp, ...others }) => {
                         <Grid item>
                             <Typography
                                 variant="subtitle1"
-                                component={Link}
-                                to='/pages/forgot-password/forgot-password3'
+                                component="a"
+                                href="/pages/forgot-password/forgot-password3"
                                 color="secondary"
                                 sx={{ textDecoration: 'none' }}
                             >

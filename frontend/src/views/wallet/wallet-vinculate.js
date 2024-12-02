@@ -16,8 +16,8 @@ const MercadoPagoCallback = () => {
 
       if (code && state) {
         try {
-          const token = localStorage.getItem("token"); // Obtener el token JWT del localStorage
-
+          const token = localStorage.getItem("token");
+          console.log("Token obtenido desde wallet-vinculate:", token);
           if (!token) {
             console.error("Token no encontrado en localStorage.");
             // window.location.href = "/mercadopago/error"; // Redirigir a la página de error
