@@ -6,6 +6,7 @@ const authRoutes = require('./src/routes/authentication/auth.routes')
 const app = express();
 const morgan = require ('morgan')
 const TOKEN_SECRET = require('./src/config');
+const axios = require("axios");
 
 app.use(
   cors({
