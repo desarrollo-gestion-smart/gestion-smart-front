@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import cookies from 'js-cookie';
+
 import axios from "axios";
 import {
   Card,
@@ -65,44 +67,32 @@ const paymentMethods = [
     available: false,
   },
 ];
-
 const PaymentCards = () => {
-  const [walletStatus, setWalletStatus] = useState(null); // Estado inicial de la wallet
-  const [loading, setLoading] = useState(true); // Estado de carga
+  const [walletStatus, setWalletStatus] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Función para verificar el estado de la billetera
-  
-
+  // Verificar el estado de la billetera
   useEffect(() => {
     const checkWalletStatus = async () => {
-      const token = localStorage.getItem("token");
-      console.log("Token obtenido:", token);
-
-      if (!token) {
-        console.error("Token no disponible en localStorage.");
-        setLoading(false);
-        return;
-      }
-
       try {
         const response = await axios.get(
           "https://vigilant-prosperity-production.up.railway.app/api/mercadopago/wallet-status",
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            withCredentials: true, // Permitir cookies en la solicitud
           }
         );
         console.log("Respuesta de la API:", response.data);
 
         if (response.status === 200 && response.data.walletStatus) {
-          setWalletStatus(response.data.walletStatus); // Ajuste aquí
+          setWalletStatus(response.data.walletStatus);
         } else {
-          console.error("Estructura inesperada en la respuesta de la API:", response.data);
+          console.error(
+            "Estructura inesperada en la respuesta de la API:",
+            response.data
+          );
         }
       } catch (error) {
         console.error("Error al obtener el estado de la wallet:", error);
-        // Detalles adicionales para la depuración
         if (error.response) {
           console.error("Respuesta del servidor:", error.response);
         } else if (error.request) {
@@ -117,18 +107,30 @@ const PaymentCards = () => {
 
     checkWalletStatus();
   }, []);
-  // Lógica para conectar Mercado Pago
+
+  // Conectar Mercado Pago
   const handleConnect = (url) => {
     if (url.includes("mercadopago")) {
       const clientId = "275793137258734";
       const redirectUri =
         "https://gestion-smart-testing.com/vinculate/mercadopago/callback";
-      const token = localStorage.getItem("token");
 
+      // Lee el token desde las cookies
+      const token = cookies.get("token");
+      console.log("Token obtenido desde las cookies:", token);
+
+      if (!token) {
+        console.error("Token no disponible en las cookies.");
+        alert("Por favor, inicia sesión nuevamente.");
+        return;
+      }
+
+      // Construir la URL con el estado (token)
       const authorizationUrl = `https://auth.mercadopago.com/authorization?client_id=${clientId}&response_type=code&platform_id=mp&redirect_uri=${encodeURIComponent(
         redirectUri
       )}&state=${encodeURIComponent(token)}`;
 
+      // Abrir la ventana emergente para vinculación
       const popup = window.open(authorizationUrl, "_blank");
 
       if (!popup) {
@@ -136,6 +138,7 @@ const PaymentCards = () => {
         return;
       }
 
+      // Manejo del cierre de la ventana emergente
       const pollTimer = setInterval(() => {
         if (popup.closed) {
           clearInterval(pollTimer);

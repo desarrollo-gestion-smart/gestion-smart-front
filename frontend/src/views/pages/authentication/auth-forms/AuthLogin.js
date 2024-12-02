@@ -21,7 +21,8 @@ import { Formik } from 'formik';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import cookies from 'js-cookie';
+import Cookies from 'js-cookie';
+console.log(Cookies.get('token')); // Debería imprimir el valor del token
 
 const JWTLogin = ({ loginProp, ...others }) => {
     const theme = useTheme();
@@ -58,10 +59,13 @@ const JWTLogin = ({ loginProp, ...others }) => {
                         body: JSON.stringify(values),
                         credentials: 'include' // Permite que las cookies se envíen y reciban
                     });
+                    console.log('Respuesta recibida:', response);
 
                     if (response.ok) {
                         // Extraer el token desde las cookies
                         const token = cookies.get('token');
+                        console.log('Token obtenido de las cookies:', token);
+
                         if (token) {
                             // Guardar el token en localStorage
                             localStorage.setItem('token', token);
