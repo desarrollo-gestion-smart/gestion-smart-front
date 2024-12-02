@@ -52,11 +52,11 @@ const mercadopagoController = {
       );
 
       res.status(200).json({
-        redirectUrl: "https://gestion-smart.com/apps/wallet/vinculate?success=true",
+        redirectUrl: "https://gestion-smart-testing.com/apps/wallet/vinculate?success=true",
       });
     } catch (error) {
       res.status(500).json({
-        redirectUrl: "https://gestion-smart.com/apps/wallet/vinculate?success=false",
+        redirectUrl: "https://gestion-smart-testing.com/apps/wallet/vinculate?success=false",
         error: error.response?.data || error.message,
       });
     }

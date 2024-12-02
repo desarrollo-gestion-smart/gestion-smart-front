@@ -79,7 +79,7 @@ app.get("/api/mercadopago/callback", async (req, res) => {
         grant_type: "authorization_code",
         client_id: "275793137258734",
         client_secret: "xzoghtz7AINHIGA1ZOzyDBEaJYW8iXjV",
-        redirect_uri: "https://gestion-smart.com/vinculate/mercadopago/callback",
+        redirect_uri: "https://gestion-smart-testing.com/vinculate/mercadopago/callback",
         code,
       }),
       {
