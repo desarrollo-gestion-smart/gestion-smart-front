@@ -60,15 +60,14 @@ const login = async (req, res) => {
             return res.status(400).json({ message: "Credenciales incorrectas" });
         }
 
+        // Generar el token JWT
         const token = createAccesToken({ id: userFound._id });
 
         console.log('Token generado:', token);
 
-        // Enviar el token en el encabezado
-        res.setHeader('Authorization', `Bearer ${token}`);
-
-        // Enviar información del usuario en el cuerpo (sin token)
+        // Devolver el token y los datos del usuario
         res.json({
+            token, // Enviamos el token en la respuesta
             user: {
                 id: userFound._id,
                 firstname: userFound.firstname,
@@ -82,6 +81,7 @@ const login = async (req, res) => {
         res.status(500).json({ message: "Error en el servidor" });
     }
 };
+
 
 const logout = async(req,res) =>{
     res.cookie('token', "", {
