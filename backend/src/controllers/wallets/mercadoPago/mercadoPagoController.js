@@ -2,34 +2,6 @@ const jwt = require("jsonwebtoken");
 const axios = require("axios");
 const User = require("../../../models/users"); // Suponiendo un modelo User
 
-
-
-const generateMercadoPagoState = (req, res) => {
-  const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
-  if (!token) {
-    return res.status(401).json({ error: "Usuario no autenticado" });
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decoded.userId;
-
-    // Genera el `state` con el `userId`
-    const state = jwt.sign({ userId }, process.env.JWT_SECRET, {
-      expiresIn: "10m",
-    });
-
-    res.status(200).json({ state });
-  } catch (error) {
-    console.error("Error al generar el state:", error);
-    res.status(500).json({ error: "Error al generar el state" });
-  }
-};
-
-// Ruta para generar el state
-router.get("/generate-mercadopago-state", generateMercadoPagoState);
-
-
 const mercadopagoController = {
   callback: async (req, res) => {
     const { code, state } = req.query;
