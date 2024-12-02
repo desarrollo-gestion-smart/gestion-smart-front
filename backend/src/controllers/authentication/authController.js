@@ -26,7 +26,7 @@ const register = async (req,res) =>{
      const token = await createAccesToken ({ id: userSaved._id})
      res.cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // Solo en HTTPS en producción
+        secure: "https://vigilant-prosperity-production.up.railway.app", // Solo en HTTPS en producción
         sameSite: "none", // Permitir cookies cross-origin
         path: "/",
       });
