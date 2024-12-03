@@ -94,7 +94,6 @@ app.post("/api/mercadopago/callback", async (req, res) => {
       { new: true, upsert: true }
     );
 
-    // Redirigir al frontend con éxito
     res.status(200).json({ redirectUrl: "https://gestion-smart-testing.com/apps/wallet/vinculate?success=true" });
   } catch (error) {
     console.error("Error en el procesamiento del callback:", error.message);
