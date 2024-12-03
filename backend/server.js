@@ -93,11 +93,15 @@ app.post("/api/mercadopago/callback", async (req, res) => {
     );
 
     // Redirigir al frontend con éxito
-    res.redirect("https://gestion-smart-testing.com/apps/wallet/vinculate?success=true");
+    res.status(200).json({ redirectUrl: "https://gestion-smart-testing.com/apps/wallet/vinculate?success=true" });
   } catch (error) {
     console.error("Error en el procesamiento del callback:", error.message);
 
-    res.redirect("https://gestion-smart-testing.com/apps/wallet/vinculate?success=false");
+
+    res.status(500).json({
+      redirectUrl: "https://gestion-smart-testing.com/apps/wallet/vinculate?success=false",
+      error: error.message,
+    });
   }
 });
 
