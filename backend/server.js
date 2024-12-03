@@ -38,8 +38,8 @@ app.use('/api',authRoutes);
 
 
 //wallets
-app.get("/api/mercadopago/callback", async (req, res) => {
-  const { code, state } = req.query;
+app.post("/api/mercadopago/callback", async (req, res) => {
+  const { code, state } = req.body;
 
   if (!code || !state) {
     return res.status(400).json({ error: "Faltan parámetros (code o state)." });
@@ -47,14 +47,18 @@ app.get("/api/mercadopago/callback", async (req, res) => {
 
   try {
     // Decodificar y validar el token `state`
-    const decodedState = jwt.verify(state, process.env.JWT_SECRET);
+    const decodedState = jwt.verify(state, process.env.JWT_SECRET); // Solo el backend debe hacer esto
     const { id: userId } = decodedState;
 
-    // Verificar que el usuario existe
+    if (!userId) {
+      throw new Error("El token `state` no contiene un `userId` válido.");
+    }
+
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ error: "Usuario no encontrado." });
     }
+
 
     // Solicitar token de Mercado Pago
     const response = await axios.post(
