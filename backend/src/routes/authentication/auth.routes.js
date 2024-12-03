@@ -1,13 +1,12 @@
-const Router = require('express')
-const {login, register, logout, profile} = require('../../controllers/authentication/authController')
-const router = Router();
-const authrequired = require('../../middlewares/validateToken')
+const express = require('express');
+const { registerUser, loginUser } = require('../../controllers/authentication/authController');
 
-router.post('/register', register);
-router.post('/login', login);
+const router = express.Router();
 
-router.post('/logout', logout)
+// Ruta de registro
+router.post('/register', registerUser);
 
-router.get('/profile', authrequired, profile)
+// Ruta de logueo
+router.post('/login', loginUser);
 
-module.exports = router
+module.exports = router;

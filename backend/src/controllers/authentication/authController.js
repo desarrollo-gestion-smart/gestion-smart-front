@@ -1,114 +1,80 @@
-const User = require ('../../models/users')
-const bcrypt = require('bcrypt')
-const TOKEN_SECRET = require('../../config'); // Asegúrate de que este archivo exporta una clave válida
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const User = require('../../models/users');
+const dotenv = require('dotenv')
+// Registro de usuario
 
-function createAccessToken(userId) {
-    return jwt.sign({ id: userId }, TOKEN_SECRET, { expiresIn: '1d' });
-}
 
+dotenv.config()
+const registerUser = async (req, res) => {
+    const { firstname, lastname, email, password } = req.body;
 
-const register = async (req,res) =>{
-    const{
-        firstname,
-        lastname,
-         email,
-         password
-        } = req.body
+    try {
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: 'El email ya está registrado' });
+        }
 
-       try {
-        passwordHash = await bcrypt.hash(password,10)
-        const newUser= new User({
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = new User({
             firstname,
             lastname,
             email,
-            password: passwordHash,
-         })
- 
-        
-       
-      const userSaved =   await newUser.save()
-    
-    
-     const token = await createAccesToken ({ id: userSaved._id})
-     res.cookie('token', token, {
-        httpOnly: false, // Ya está correcto para este caso
-        secure: true, // Mantenlo si usas HTTPS
-        sameSite: 'None', // Cambia a Lax o None si estás trabajando en dominios diferentes
-      
-     })
-    res.json({
+            password: hashedPassword,
+            status: 'active',
+        });
 
-        id: userSaved._id,
-        firstname: userSaved.firstname,
-        lastname: userSaved.lastname,
-        email: userSaved.email,
-        createAt:userSaved.createdAt
-    })
+        const savedUser = await newUser.save();
 
-    } catch (error) {
-        res.status(500).json({message: error.message})
-        
-       }
-};
-const login = async (req, res) => {
-    const { email, password } = req.body;
-
-    try {
-        // Buscar al usuario en la base de datos
-        const userFound = await User.findOne({ email });
-        if (!userFound) {
-            return res.status(400).json({ message: 'Usuario no encontrado' });
-        }
-
-        // Verificar la contraseña
-        const isMatch = await bcrypt.compare(password, userFound.password);
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Credenciales incorrectas' });
-        }
-
-        // Generar el token JWT
-        const token = createAccessToken(userFound._id);
-
-        console.log('Token generado:', token); // Esto debe mostrar una cadena JWT válida
-
-        // Enviar el token y los datos del usuario al cliente
-        res.json({
-            token,
+        return res.status(201).json({
+            message: 'Usuario registrado exitosamente',
             user: {
-                id: userFound._id,
-                firstname: userFound.firstname,
-                lastname: userFound.lastname,
-                email: userFound.email,
-                createdAt: userFound.createdAt,
+                id: savedUser._id.toString(),
+                firstname: savedUser.firstname,
+                lastname: savedUser.lastname,
+                email: savedUser.email,
             },
         });
-    } catch (error) {
-        console.error('Error en el login:', error.message);
-        res.status(500).json({ message: 'Error en el servidor' });
+    } catch (err) {
+        return res.status(500).json({ message: 'Error en el registro', error: err.message });
     }
 };
 
+// Logueo de usuario
+const loginUser = async (req, res) => {
+    const { email, password } = req.body;
 
-const logout = async(req,res) =>{
-    res.cookie('token', "", {
-        expires: new Date(0)
-    })
-    return res.send(200).json
-}
+    try {
+        // Buscar usuario por email
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ message: 'Usuario no encontrado' });
+        }
 
-const profile = async (req,res) => {
-const userFound = await User.findById(req.user.id)
-if(!userFound) return res.status(400).json ({
-    message: "User not found"
-});
-return res.json({
-    id: userFound._id,
-    firstname: userFound.firstname,
-    lastname: userFound.lastname,
-    email: userFound.email,
-    createAt:userFound.createdAt
-})
-}
+        // Comparar contraseñas
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+        if (!isPasswordCorrect) {
+            return res.status(400).json({ message: 'Contraseña incorrecta' });
+        }
 
-module.exports = {login, register, logout, profile};
+        // Generar token JWT con el _id convertido a string
+        const token = jwt.sign(
+            { userId: user._id.toString(), email: user.email }, // Convertir _id a string
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+        
+        return res.status(200).json({
+            token,
+            userId: user._id.toString(), 
+        });
+    } catch (err) {
+        return res.status(500).json({ message: 'Error en el logueo', error: err.message });
+    }
+};
+module.exports = {
+    registerUser,
+    loginUser,
+};

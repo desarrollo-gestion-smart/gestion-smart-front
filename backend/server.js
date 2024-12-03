@@ -1,15 +1,18 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require("mongoose");
-
-// const mercadoPagoRoutes = require('./src/routes/wallets/mercadoPago/mercadoPagoRoutes')
-const connectDB = require ('./src/db')
 const authRoutes = require('./src/routes/authentication/auth.routes')
 const app = express();
 const morgan = require ('morgan')
-const TOKEN_SECRET = require('./src/config');
 const axios = require("axios");
 const User = require('./src/models/users')
+const dontenv = require('dotenv')
+const jwt = require("jsonwebtoken");
+
+//variables de ent
+dontenv.config();
+
+//cors
 app.use(
   cors({
     origin: [
@@ -26,28 +29,15 @@ app.use(
   })
 );
 
-
+//procesamiento
 app.use(morgan('dev'));
 app.use(express.json());
 
-// base de datos
 //autenticaciones
 app.use('/api',authRoutes);
 
 
-
-
-
-// Rutas existentes
-// app.use('/api/users', authRoutes);
-// app.get('/api/users', getUsers);
-// app.use('/api', clientRoutes);
-
-
-// uso de mercado pago
-// app.use("/api/mercadopago", mercadoPagoRoutes);
-const jwt = require("jsonwebtoken");
-
+//wallets
 app.get("/api/mercadopago/callback", async (req, res) => {
   const { code, state } = req.query;
 
@@ -60,7 +50,7 @@ app.get("/api/mercadopago/callback", async (req, res) => {
 
   try {
     console.log("Decodificando y verificando el token `state`...");
-    const decodedState = jwt.verify(state, TOKEN_SECRET);
+    const decodedState = jwt.verify(state, process.env.JWT_SECRET);
     console.log(decodedState.id)
     const { userId } = decodedState.id; 
     if (!userId) {
@@ -151,7 +141,7 @@ app.get("/api/mercadopago/wallet-status", async (req, res) => {
     const token = authHeader.split(" ")[1];
     console.log("Token recibido:", token);
 
-    const decoded = jwt.verify(token, TOKEN_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     console.log("Token decodificado:", decoded);
 
     const user = await User.findById(decoded.userId);

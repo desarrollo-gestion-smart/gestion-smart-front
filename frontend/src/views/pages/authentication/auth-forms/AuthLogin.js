@@ -28,20 +28,22 @@ const JWTLogin = () => {
             })}
             onSubmit={async (values, { setErrors, setSubmitting }) => {
                 try {
-                    const response = await fetch('https://vigilant-prosperity-production.up.railway.app/api/login', {
+                    const response = await fetch('http://localhost:5001/api/login', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(values),
                     });
 
                     if (response.ok) {
-                        const { token, user } = await response.json();
+                        const { token, userId } = await response.json();
                         console.log('Token recibido:', token);
+                        console.log('respuesta:', response);
 
+                        
                         // Guardar el token en localStorage
                         if (token) {
                             localStorage.setItem('token', token);
-                            const userId = user.id
+                
                             localStorage.setItem('userId',userId); // Lo almacenas como string
 
                             console.log('Token guardado en localStorage:', token);
