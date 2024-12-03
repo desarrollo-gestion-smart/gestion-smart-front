@@ -9,22 +9,18 @@ import { Typography, Box, CircularProgress } from "@mui/material";
         const processCallback = async () => {
           const query = new URLSearchParams(window.location.search);
           const code = query.get("code");
-      
-          if (code) {
+          const state = query.get("state");
+    
+          if (code && state) {
             try {
-              // Enviar solo `code` al backend
+              // Enviar los parámetros `code` y `state` al backend
               const response = await axios.post(
                 "https://vigilant-prosperity-production.up.railway.app/api/mercadopago/callback",
-                { code },
-                {
-                  headers: {
-                    Authorization: `Bearer ${localStorage.getItem("authToken")}`, // Asegúrate de tener el token JWT aquí
-                  },
-                }
+                { code, state }
               );
-      
+    
               const { redirectUrl } = response.data;
-      
+    
               if (redirectUrl) {
                 window.location.href = redirectUrl;
               }
@@ -33,11 +29,11 @@ import { Typography, Box, CircularProgress } from "@mui/material";
               alert("Error al procesar la solicitud. Por favor, inténtelo de nuevo.");
             }
           } else {
-            console.error("Falta el parámetro 'code' en la URL.");
+            console.error("Faltan parámetros 'code' o 'state' en la URL.");
             alert("Faltan parámetros necesarios en la URL.");
           }
         };
-      
+    
         processCallback();
       }, []);
   

@@ -39,21 +39,19 @@ app.use('/api',authRoutes);
 
 //wallets
 app.post("/api/mercadopago/callback", async (req, res) => {
-  const { code } = req.body;
-  const authHeader = req.headers.authorization;
+  const { code, state } = req.body;
 
-  if (!authHeader || !code) {
-    return res.status(400).json({ error: "Faltan parámetros o token de autorización." });
+  if (!code || !state) {
+    return res.status(400).json({ error: "Faltan parámetros (code o state)." });
   }
 
   try {
-    // Obtener y decodificar el token del encabezado de autorización
-    const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const { userId } = decoded;
+    // Decodificar el token `state`
+    const decodedState = jwt.verify(state, process.env.JWT_SECRET); // Cambiar de `token` a `state`
+    const { userId } = decodedState;
 
     if (!userId) {
-      throw new Error("El token no contiene un `userId` válido.");
+      throw new Error("El token `state` no contiene un `userId` válido.");
     }
 
     // Verificar si el usuario existe
@@ -94,6 +92,7 @@ app.post("/api/mercadopago/callback", async (req, res) => {
       { new: true, upsert: true }
     );
 
+    // Redirigir al frontend con éxito
     res.status(200).json({ redirectUrl: "https://gestion-smart-testing.com/apps/wallet/vinculate?success=true" });
   } catch (error) {
     console.error("Error en el procesamiento del callback:", error.message);
@@ -140,4 +139,6 @@ app.get("/api/mercadopago/wallet-status", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+
 module.exports = app
