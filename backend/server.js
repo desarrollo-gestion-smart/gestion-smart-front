@@ -39,27 +39,28 @@ app.use('/api',authRoutes);
 
 //wallets
 app.post("/api/mercadopago/callback", async (req, res) => {
-  const { code, state } = req.body;
+  const { code } = req.body;
+  const authHeader = req.headers.authorization;
 
-  if (!code || !state) {
-    return res.status(400).json({ error: "Faltan parámetros (code o state)." });
+  if (!authHeader || !code) {
+    return res.status(400).json({ error: "Faltan parámetros o token de autorización." });
   }
 
   try {
-    // Decodificar y validar el token `state`
-    const decodedState = jwt.verify(state, process.env.JWT_SECRET); // Solo el backend debe hacer esto
-    
-    const { id: userId } = decodedState;
+    // Obtener y decodificar el token del encabezado de autorización
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const { userId } = decoded;
 
     if (!userId) {
-      throw new Error("El token `state` no contiene un `userId` válido.");
+      throw new Error("El token no contiene un `userId` válido.");
     }
 
+    // Verificar si el usuario existe
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ error: "Usuario no encontrado." });
     }
-
 
     // Solicitar token de Mercado Pago
     const response = await axios.post(
@@ -97,7 +98,6 @@ app.post("/api/mercadopago/callback", async (req, res) => {
     res.status(200).json({ redirectUrl: "https://gestion-smart-testing.com/apps/wallet/vinculate?success=true" });
   } catch (error) {
     console.error("Error en el procesamiento del callback:", error.message);
-
 
     res.status(500).json({
       redirectUrl: "https://gestion-smart-testing.com/apps/wallet/vinculate?success=false",
