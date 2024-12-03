@@ -8,8 +8,7 @@ const axios = require("axios");
 const User = require('./src/models/users')
 const dontenv = require('dotenv')
 const jwt = require("jsonwebtoken");
-
-const authrequired = require('./src/middlewares/validateToken')
+const authrequired = require ("./src/middlewares/validateToken")
 //variables de ent
 dontenv.config();
 
@@ -39,6 +38,7 @@ app.use('/api',authRoutes);
 
 
 //wallets
+
 
 
 
