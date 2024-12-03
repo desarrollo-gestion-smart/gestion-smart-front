@@ -103,7 +103,7 @@ app.get('/api/mercadopago/callback', authrequired, async (req, res) => {
 
   }
 });
-app.get('/api/mercadopago/wallet-status', authenticateJWT, async (req, res) => {
+app.get('/api/mercadopago/wallet-status', authrequired, async (req, res) => {
   const userId = req.user.userId;
   try {
     const user = await User.findById(userId);
