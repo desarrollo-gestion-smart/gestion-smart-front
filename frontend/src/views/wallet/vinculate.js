@@ -73,7 +73,8 @@ const PaymentCards = () => {
 
   useEffect(() => {
     const checkWalletStatus = async () => {
-      const token = localStorage.getItem("token"); // Lee el token desde localStorage
+      const token = localStorage.getItem("token");
+      console.log('[DEBUG] token desde vinculate', token)
       if (!token) {
         console.error("Token no disponible en localStorage.");
         alert("Por favor, inicia sesión nuevamente.");
@@ -105,49 +106,19 @@ const PaymentCards = () => {
     checkWalletStatus();
   }, []);
 
-  const handleConnect = (url) => {
+  const handleConnect = async (url) => {
     if (url.includes("mercadopago")) {
+
       const clientId = "275793137258734";
       const redirectUri = "https://gestion-smart-testing.com/vinculate/mercadopago/callback";
-
       const token = localStorage.getItem("token");
-      if (!token) {
-        console.error("Token no disponible en localStorage.");
-        alert("Por favor, inicia sesión nuevamente.");
-        return;
-      }
 
-      // Decodificar el token JWT
-      try {
-        const decodedToken = JSON.parse(atob(token.split(".")[1])); // Decodifica el payload del JWT
-        const userId = decodedToken.id; // Extraer el `id` directamente
-
-        if (!userId) {
-          throw new Error("El token no contiene un userId válido.");
-        }
-
-        const state = btoa(JSON.stringify({ userId, token })); // Codificar el `state` con el `userId`
-
-        const authorizationUrl = `https://auth.mercadopago.com/authorization?client_id=${clientId}&response_type=code&platform_id=mp&redirect_uri=${encodeURIComponent(
+      const authorizationUrl = `https://auth.mercadopago.com/authorization?client_id=${clientId}&response_type=code&platform_id=mp&redirect_uri=${encodeURIComponent(
           redirectUri
-        )}&state=${encodeURIComponent(state)}`;
+      )}&state=${encodeURIComponent(token)}`;
 
-        const popup = window.open(authorizationUrl, "_blank");
-        if (!popup) {
-          alert("Por favor, habilita las ventanas emergentes en tu navegador.");
-          return;
-        }
+      window.open(authorizationUrl, "_blank");
 
-        const pollTimer = setInterval(() => {
-          if (popup.closed) {
-            clearInterval(pollTimer);
-            window.location.reload();
-          }
-        }, 500);
-      } catch (error) {
-        console.error("Error al decodificar el token:", error);
-        alert("Error al procesar la vinculación. Por favor, inténtelo de nuevo.");
-      }
     }
   };
 

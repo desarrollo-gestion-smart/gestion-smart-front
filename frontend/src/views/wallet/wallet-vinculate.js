@@ -19,8 +19,7 @@ const MercadoPagoCallback = () => {
             throw new Error("El token `state` no contiene `userId` o `token` válido.");
           }
   
-          // Guardar userId en localStorage
-          localStorage.getItem('userId', userId);
+          localStorage.setItem('userId', userId);
           console.log("User ID guardado en localStorage:", userId);
   
           const response = await axios.get(

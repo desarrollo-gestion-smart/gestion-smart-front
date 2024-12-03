@@ -28,7 +28,7 @@ const JWTLogin = () => {
             })}
             onSubmit={async (values, { setErrors, setSubmitting }) => {
                 try {
-                    const response = await fetch('http://localhost:5001/api/login', {
+                    const response = await fetch('https://vigilant-prosperity-production.up.railway.app/api/login', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(values),
@@ -39,7 +39,7 @@ const JWTLogin = () => {
                         console.log('Token recibido:', token);
                         console.log('respuesta:', response);
 
-                        
+
                         // Guardar el token en localStorage
                         if (token) {
                             localStorage.setItem('token', token);

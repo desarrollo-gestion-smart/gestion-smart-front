@@ -41,43 +41,22 @@ app.use('/api',authRoutes);
 app.get("/api/mercadopago/callback", async (req, res) => {
   const { code, state } = req.query;
 
-  console.log("Callback recibido con parámetros:", { code, state });
-
   if (!code || !state) {
-    console.error("Faltan parámetros: code o state");
-    return res.status(400).json({ error: "Faltan parámetros (code o state)" });
+    return res.status(400).json({ error: "Faltan parámetros (code o state)." });
   }
 
   try {
-    console.log("Decodificando y verificando el token `state`...");
+    // Decodificar y validar el token `state`
     const decodedState = jwt.verify(state, process.env.JWT_SECRET);
-    console.log(decodedState.id)
-    const { userId } = decodedState.id; 
-    if (!userId) {
-      console.error("El token `state` no contiene un `userId` válido:", decodedState);
-      return res.status(400).json({ error: "El token `state` no contiene un `userId` válido." });
-    }
+    const { id: userId } = decodedState;
 
-    console.log("Token `state` validado. Usuario ID:", userId);
-
-    const objectId = mongoose.Types.ObjectId(userId);
-    console.log("Buscando usuario en la base de datos con ID:", objectId);
-
-    const user = await User.findById(objectId);
+    // Verificar que el usuario existe
+    const user = await User.findById(userId);
     if (!user) {
-      console.error("Usuario no encontrado en la base de datos:", userId);
-      return res.status(404).json({ error: "Usuario no encontrado" });
+      return res.status(404).json({ error: "Usuario no encontrado." });
     }
 
-    console.log("Usuario encontrado:", user.email);
-
-
- 
-
-
-
-    // Solicitar el token de Mercado Pago
-    console.log("Solicitando token de Mercado Pago...");
+    // Solicitar token de Mercado Pago
     const response = await axios.post(
       "https://api.mercadopago.com/oauth/token",
       new URLSearchParams({
@@ -91,12 +70,10 @@ app.get("/api/mercadopago/callback", async (req, res) => {
     );
 
     const { access_token, refresh_token, user_id, expires_in } = response.data;
-    console.log("Tokens obtenidos de Mercado Pago:", response.data);
 
     // Actualizar la billetera del usuario
-    console.log("Actualizando la billetera del usuario...");
     await User.findByIdAndUpdate(
-      objectId,
+      userId,
       {
         $set: {
           "wallet.mercadoPago": {
@@ -111,22 +88,14 @@ app.get("/api/mercadopago/callback", async (req, res) => {
       { new: true, upsert: true }
     );
 
-    console.log("Billetera vinculada exitosamente para el usuario:", userId);
-    res.status(200).json({ redirectUrl: "https://gestion-smart-testing.com/apps/wallet/vinculate?success=true" });
+    // Redirigir al frontend con éxito
+    res.redirect("https://gestion-smart-testing.com/apps/wallet/vinculate?success=true");
   } catch (error) {
     console.error("Error en el procesamiento del callback:", error.message);
 
-    if (error.name === "JsonWebTokenError") {
-      console.error("Error en el token JWT:", error.message);
-    }
-
-    res.status(500).json({
-      redirectUrl: "https://gestion-smart-testing.com/apps/wallet/vinculate?success=false",
-      error: error.message,
-    });
+    res.redirect("https://gestion-smart-testing.com/apps/wallet/vinculate?success=false");
   }
 });
-
 app.get("/api/mercadopago/wallet-status", async (req, res) => {
   console.log("Solicitud a wallet-status recibida:", req.headers);
 
