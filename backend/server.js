@@ -96,6 +96,7 @@ app.get("/api/mercadopago/callback", async (req, res) => {
     res.redirect("https://gestion-smart-testing.com/apps/wallet/vinculate?success=false");
   }
 });
+
 app.get("/api/mercadopago/wallet-status", async (req, res) => {
   console.log("Solicitud a wallet-status recibida:", req.headers);
 
