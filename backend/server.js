@@ -94,7 +94,7 @@ app.get('/api/mercadopago/callback', authrequired, async (req, res) => {
     );
 
    // res.status(200).json({ message: 'Wallet linked successfully' });
-    res.redirect('http://localhost:3000/apps/wallet/vinculate?success=true');
+    res.redirect('https://gestion-smart-testing.com/apps/wallet/vinculate?success=true');
 
   } catch (error) {
 
