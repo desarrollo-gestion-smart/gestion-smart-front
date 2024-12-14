@@ -158,16 +158,16 @@ export function getUsersListStyle1() {
     };
 }
 
-export function getUsersListStyle2() {
-    return async () => {
-        try {
-            const response = await axios.get('/api/user-list/s2/list');
-            dispatch(slice.actions.getUsersListStyle2Success(response.data.users_s2));
-        } catch (error) {
-            dispatch(slice.actions.hasError(error));
-        }
-    };
-}
+// export function getUsersListStyle2() {
+//     return async () => {
+//         try {
+//             const response = await axios.get('/api/user-list/s2/list');
+//             dispatch(slice.actions.getUsersListStyle2Success(response.data.users_s2));
+//         } catch (error) {
+//             dispatch(slice.actions.hasError(error));
+//         }
+//     };
+// }
 
 export function getFollowers() {
     return async () => {

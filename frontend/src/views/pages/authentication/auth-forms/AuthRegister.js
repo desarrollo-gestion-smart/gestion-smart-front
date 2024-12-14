@@ -45,11 +45,11 @@ const JWTRegister = ({ ...others }) => {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              firstName: values.firstName,
-              lastName: values.lastName,
+              firstname: values.firstname, // Ajustar a `firstname`
+              lastname: values.lastname,   // Ajustar a `lastname`
               email: values.email,
               password: values.password,
-            }),
+          }),
           });
 
           const data = await response.json();

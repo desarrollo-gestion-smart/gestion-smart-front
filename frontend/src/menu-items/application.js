@@ -167,35 +167,52 @@ const application = {
             type: 'collapse',
             icon: icons.IconUsersGroup,
             children: [
-                {
-                    id: 'customer-list',
-                    title: (
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <FormattedMessage id="Administrador " />
-                            {/* <icons.ExpandMore sx={{ fontSize: '14px', marginRight:'14px'}} /> Icono de flecha más pequeño */}
-                        </Box>
-                    ),
-                    type: 'collapse',
-                    children: [
-                        {
-                            id: 'customer-list',
-                            title: <FormattedMessage id="Gestion de Usuarios" />,
-                            type: 'item',
-                            url: '/apps/customer/customer-list',
-                            breadcrumbs: false
-                        },
+            //     {
+            //         id: 'customer-list',
+            //         title: (
+            //             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            //                 <FormattedMessage id="Administrador " />
+            //                 {/* <icons.ExpandMore sx={{ fontSize: '14px', marginRight:'14px'}} /> Icono de flecha más pequeño */}
+            //             </Box>
+            //         ),
+            //         type: 'collapse',
+            //         children: [
+            //             {
+            //                 id: 'customer-list',
+            //                 title: <FormattedMessage id="Gestion de Usuarios" />,
+            //                 type: 'item',
+            //                 url: '/apps/customer/customer-list',
+            //                 breadcrumbs: false
+            //             },
         
-                        {
-                            id: 'clients-table',
-                            title: <FormattedMessage id="Gestion de Clientes" />,
-                            type: 'item',
-                            url: '/apps/clients/clientsTable',
-                            breadcrumbs: false
-                        },
+            //             {
+            //                 id: 'clients-table',
+            //                 title: <FormattedMessage id="Gestion de Clientes" />,
+            //                 type: 'item',
+            //                 url: '/apps/clients/clientsTable',
+            //                 breadcrumbs: false
+            //             },
                    
-                ]
+            //     ]
                
+            // },
+
+            {
+                id: 'customer-list',
+                title: <FormattedMessage id="Administradores" />,
+                type: 'item',
+                url: '/apps/user/list/list2',
+                breadcrumbs: false
             },
+
+            {
+                id: 'clients-table',
+                title: <FormattedMessage id="Clientes" />,
+                type: 'item',
+                url: '/apps/clients/clientsTable',
+                breadcrumbs: false
+            },
+
                 {
                     id: 'order-list',
                     title: <FormattedMessage id="Partners" />,
