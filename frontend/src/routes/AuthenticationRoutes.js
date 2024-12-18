@@ -14,7 +14,7 @@ import MinimalLayout from 'layout/MinimalLayout';
 
 // login option 2 routing
 const AuthLogin2 = Loadable(lazy(() => import('views/pages/authentication/authentication2/Login2')));
-const AuthRegister2 = Loadable(lazy(() => import('views/pages/authentication/authentication2/Register2')));
+
 const AuthForgotPassword2 = Loadable(lazy(() => import('views/pages/authentication/authentication2/ForgotPassword2')));
 const AuthCheckMail2 = Loadable(lazy(() => import('views/pages/authentication/authentication2/CheckMail2')));
 const AuthResetPassword2 = Loadable(lazy(() => import('views/pages/authentication/authentication2/ResetPassword2')));
@@ -75,10 +75,10 @@ const AuthenticationRoutes = {
             path: '/login',
             element: <AuthLogin2 />
         },
-        {
-            path: '/register',
-            element: <AuthRegister2 />
-        },
+        // {
+        //     path: '/register',
+        //     element: <AuthRegister2 />
+        // },
         {
             path: '/pages/forgot-password/forgot-password2',
             element: <AuthForgotPassword2 />
